@@ -1,0 +1,30 @@
+@import url('../login/login_style.css');
+
+.input-group input[type="date"] {
+    color: var(--text-muted);
+}
+
+.input-group input[type="date"]:focus {
+    color: var(--text-dark);
+}
+
+.terms-text {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin: 8px 0;
+    text-align: center;
+}
+
+.terms-text b, .terms-text strong {
+    color: var(--text-dark);
+    cursor: pointer;
+}
+
+.terms-text b:hover, .terms-text strong:hover {
+    text-decoration: underline;
+}
+
+.subtitle {
+    margin-bottom: 24px;
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinterest - Ver Pin</title>
+    <link rel="stylesheet" href="previsualizacion_style.css">
+</head>
+<body>
+
+    <button class="back-btn" id="btnBack" title="Volver al inicio">
+        <i class="fa-solid fa-arrow-left"></i>
+    </button>
+
+    <main class="viewer-container">
+        <div class="viewer-card">
+            
+            <div class="image-section">
+                <img id="pinImage" src="" alt="Cargando imagen...">
+            </div>
+            
+            <div class="details-section">
+                <div class="action-header">
+                    <div class="utility-icons">
+                        <button class="icon"></button>
+                        <button class="icon"></button>
+                    </div>
+                    <button class="btn-save" id="btnSave">Guardar</button>
+                </div>
+                
+                <div class="content-body">
+                    <h1 id="pinTitle">Título del Pin</h1>
+                    <p class="pin-description">
+                        Esta idea fue descubierta en Pinterest. Explora más contenido visual similar navegando en tu feed principal de ideas y tendencias.
+                    </p>
+                    
+                    <div class="author-box">
+                        <div class="avatar">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div class="author-details">
+                            <span class="author-name">Estudio Creativo</span>
+                            <span class="followers">45 mil seguidores</span>
+                        </div>
+                        <button class="btn-follow">Seguir</button>
+                    </div>
+                </div>
+
+                <div class="comments-section">
+                    <h3>Comentarios</h3>
+                    <p class="no-comments">Todavía no hay comentarios. ¡Sé el primero en compartir tu opinión!</p>
+                    <div class="comment-input-area">
+                        <div class="small-avatar"></div>
+                        <input type="text" placeholder="Añadir un comentario...">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
