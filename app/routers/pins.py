@@ -40,7 +40,6 @@ def delete_pin(pin_id: int, session: SessionDep):
     session.commit()
     return {"message": "Pin eliminado"}
 
-# Comentarios
 @router.post("/comentarios")
 def post_comentario(comentario: Comentario, session: SessionDep):
     session.add(comentario)

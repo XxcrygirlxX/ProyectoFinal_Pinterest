@@ -8,3 +8,4 @@ export const pins = [
     { id: 7, titulo: 'Diseño de Interiores', source: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=500' },
     { id: 8, titulo: 'Arte Culinario', source: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500' }
 ];
+//esto es momentaneo hasta cargar todas las imagenes y videos a un bucket para usar la api
