@@ -1,40 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pinterest - Descubrir ideas</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <header class="pinterest-navbar">
-        <div class="nav-left">
-            <a href="index.html" class="nav-logo">
-                <i class="fa-brands fa-pinterest"></i>
-            </a>
-            <button class="nav-btn active">Inicio</button>
-            <button class="nav-btn">Explorar</button>
-        </div>
+      <div class="nav-left">
+        <a href="index.html" class="nav-logo">
+          <i class="fa-brands fa-pinterest"></i>
+        </a>
+        <button class="nav-btn active">Inicio</button>
+        <button class="nav-btn">Explorar</button>
+      </div>
 
-        <div class="nav-search">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" placeholder="Buscar ideas, ropa, decoración..." id="searchInput">
-        </div>
+      <div class="nav-search">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input
+          type="text"
+          placeholder="Buscar ideas, ropa, decoración..."
+          id="searchInput"
+        />
+      </div>
 
-        <div class="nav-right">
-            <a href="./login/login.html" class="nav-auth-btn btn-login">Iniciar sesión</a>
-            <a href="./register/register.html" class="nav-auth-btn btn-register">Registrarse</a>
-            
-            <a href="./profile/profile.html" class="nav-profile-icon" title="Ver mi Perfil">
-                <i class="fa-solid fa-user"></i>
-            </a>
-        </div>
+      <div class="nav-right">
+        <a href="./login/login.html" class="nav-auth-btn btn-login"
+          >Iniciar sesión</a
+        >
+        <a href="./register/register.html" class="nav-auth-btn btn-register"
+          >Registrarse</a
+        >
+
+        <a
+          href="./profile/profile.html"
+          class="nav-profile-icon"
+          title="Ver mi Perfil"
+        >
+          <i class="fa-solid fa-user"></i>
+        </a>
+      </div>
     </header>
     <main class="feed-container">
-        <div class="masonry-grid" id="pinGrid">
-            </div>
+      <div class="masonry-grid" id="pinGrid"></div>
     </main>
     <script type="module" src="script.js"></script>
-</body>
-</html>>
+  </body>
+</html>
+>

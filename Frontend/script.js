@@ -29,3 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     renderPins(pins);
 });
+
+//temporal hasta cargar las imagenes a un bucket y usar la api para traerlas, esto es para probar la previsualizacion
+//modificar luego este codigo 
