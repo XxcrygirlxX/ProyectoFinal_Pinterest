@@ -1,10 +1,22 @@
-from sqlmodel import Field, SQLModel
+from pydantic import BaseModel, EmailStr, Field
+from sqlmodel import SQLModel, Field as SQLField
+from typing import Optional
+
+class Usuario(SQLModel, table=True):
+    id: Optional[int] = SQLField(default=None, primary_key=True)
+    email: str
+    password: str
+
+class UsuarioCreate(BaseModel):
+    email: EmailStr
+    password: str = Field(..., min_length=8)
 
 class Pin(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = SQLField(default=None, primary_key=True)
     source: str 
     titulo: str
     es_publico: bool
+    reportado: bool = False
 
 class PinCreate(SQLModel):
     source: str
@@ -12,6 +24,6 @@ class PinCreate(SQLModel):
     es_publico: bool
 
 class Comentario(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = SQLField(default=None, primary_key=True)
     texto: str
-    pin_id: int = Field(foreign_key="pin.id")
+    pin_id: int = SQLField(foreign_key="pin.id")

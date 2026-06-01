@@ -1,48 +1,52 @@
+import requests
 from fastapi import APIRouter, HTTPException, status
-from sqlmodel import select
+from typing import List
 from db import SessionDep
-from modelos import Pin, Comentario, PinCreate
+from modelos import Pin, Comentario
+from sqlmodel import select
 
 router = APIRouter(prefix="/pins", tags=["pins"])
 
-@router.get("/")
-def get_pins(session: SessionDep):
-    return session.exec(select(Pin)).all()
-
-@router.post("/", response_model=Pin, status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 def post_pin(pin: Pin, session: SessionDep):
+    try:
+        response = requests.post("http://localhost:3000/predict", json={"url": pin.source}, timeout=3)
+        if response.json().get("is_nsfw"):
+            raise HTTPException(status_code=400, detail="Imagen no apta")
+    except: pass 
+    
     session.add(pin)
     session.commit()
-    session.refresh(pin)
     return pin
 
-@router.put("/{pin_id}", response_model=Pin)
-def update_pin(pin_id: int, pin_data: PinCreate, session: SessionDep):
-    db_pin = session.get(Pin, pin_id)
-    if not db_pin:
-        raise HTTPException(status_code=404, detail="Pin no encontrado")
-    
-    data = pin_data.model_dump(exclude_unset=True)
-    for key, value in data.items():
-        setattr(db_pin, key, value)
-        
-    session.add(db_pin)
-    session.commit()
-    session.refresh(db_pin)
-    return db_pin
+@router.get("/", response_model=List[Pin])
+def get_pins(session: SessionDep):
+    statement = select(Pin)
+    results = session.exec(statement)
+    return results.all()
 
 @router.delete("/{pin_id}")
 def delete_pin(pin_id: int, session: SessionDep):
-    db_pin = session.get(Pin, pin_id)
-    if not db_pin:
-        raise HTTPException(status_code=404, detail="Pin no encontrado")
-    session.delete(db_pin)
+    pin = session.get(Pin, pin_id)
+    if not pin: raise HTTPException(status_code=404, detail="No encontrado")
+    session.delete(pin)
     session.commit()
-    return {"message": "Pin eliminado"}
+    return {"message": "Borrado"}
 
-@router.post("/comentarios")
-def post_comentario(comentario: Comentario, session: SessionDep):
+@router.post("/{pin_id}/comentarios")
+def post_comentario(pin_id: int, comentario: Comentario, session: SessionDep):
+    comentario.pin_id = pin_id
     session.add(comentario)
     session.commit()
-    session.refresh(comentario)
     return comentario
+
+@router.patch("/{pin_id}/reportar")
+def reportar_pin(pin_id: int, session: SessionDep):
+    pin = session.get(Pin, pin_id)
+    if not pin: raise HTTPException(status_code=404, detail="Pin no encontrado")
+    
+    pin.reportado = True
+    session.add(pin)
+    session.commit()
+    session.refresh(pin)
+    return {"message": "Pin reportado exitosamente"}

@@ -9,13 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
         listaDePins.forEach(pin => {
             const pinCard = document.createElement('div');
             pinCard.classList.add('pin-card');
-            
             pinCard.innerHTML = `
                 <img src="${pin.source}" alt="${pin.titulo}" loading="lazy">
                 <div class="pin-overlay">
                     <button class="btn-save">Guardar</button>
                     <div class="overlay-bottom">
                         <button class="btn-icon-action" title="Compartir"><i class="fa-solid fa-share-nodes"></i></button>
+                        <button class="btn-icon-action" title="Reportar" onclick="reportarPin(${pin.id})">
+                            <i class="fa-solid fa-flag"></i>
+                        </button>
                     </div>
                 </div>
             `;
@@ -23,7 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const url = `./previsualizacion/previsualizacion.html?img=${encodeURIComponent(pin.source)}&title=${encodeURIComponent(pin.titulo)}`;
                 window.location.href = url;
             });
-            
+
+            async function reportar(pinId) {
+                const response = await fetch(`http://127.0.0.1:8000/pins/${pinId}/reportar`, {
+                    method: 'PATCH'
+                });
+                if (response.ok) {
+                    alert("Imagen reportada a moderación");
+                    cargarPines(); 
+                }
+            }
+
             pinGrid.appendChild(pinCard);
         });
     }

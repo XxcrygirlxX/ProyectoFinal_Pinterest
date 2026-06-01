@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import pins
+from app.routers import auth, pins
 from db import create_all_table
 
 app = FastAPI(lifespan=create_all_table)
@@ -13,6 +13,7 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+app.include_router(auth.router)
 app.include_router(pins.router)
 
 @app.get("/")
