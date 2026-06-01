@@ -5,6 +5,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const birthdateInput = document.getElementById('regBirthdate');
     const toLoginLink = document.getElementById('toLogin');
 
+    google.accounts.id.initialize({
+        client_id: "62688628748-80so2m75d6mtoeortm12mt1pf4stdup6.apps.googleusercontent.com", 
+        callback: handleGoogleRegisterResponse
+    });
+
+    google.accounts.id.renderButton(
+        document.getElementById("googleRegisterButton"),
+        { 
+            theme: "outline", 
+            size: "large", 
+            type: "standard",
+            shape: "pill",       
+            text: "signup_with", 
+            logo_alignment: "left",
+            width: 384 
+        }
+    );
+
+    function handleGoogleRegisterResponse(response) {
+        console.log("JWT de Registro con Google obtenido:", response.credential);
+
+        alert("¡Registro con Google exitoso en el cliente! Cuenta lista para vincular.");
+    }
+
     registerForm.addEventListener('submit', (e) => {
         e.preventDefault();
         

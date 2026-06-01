@@ -60,3 +60,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+window.onload = function () {
+    google.accounts.id.initialize({
+        client_id: "62688628748-80so2m75d6mtoeortm12mt1pf4stdup6.apps.googleusercontent.com", 
+        callback: handleCredentialResponse
+    });
+
+    google.accounts.id.renderButton(
+        document.getElementById("googleButton"),
+        { 
+            theme: "outline", 
+            size: "large", 
+            type: "standard",
+            shape: "pill",      
+            text: "signin_with", 
+            logo_alignment: "left",
+            width: 384 
+        }
+    );
+};
+
+function handleCredentialResponse(response) {
+    console.log("Encoded JWT ID token: " + response.credential);
+
+    alert("Login con Google exitoso en el cliente");
+}
