@@ -7,13 +7,12 @@ from sqlmodel import select
 
 router = APIRouter(prefix="/pins", tags=["pins"])
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/")
 def post_pin(pin: Pin, session: SessionDep):
     try:
-        response = requests.post("http://localhost:3000/predict", json={"url": pin.source}, timeout=3)
-        if response.json().get("is_nsfw"):
-            raise HTTPException(status_code=400, detail="Imagen no apta")
-    except: pass 
+        res = requests.post("http://localhost:3000/predict", json={"url": pin.source}, timeout=3)
+        if res.json().get("is_nsfw"): raise HTTPException(status_code=400, detail="Imagen no apta")
+    except: pass
     
     session.add(pin)
     session.commit()
@@ -50,3 +49,7 @@ def reportar_pin(pin_id: int, session: SessionDep):
     session.commit()
     session.refresh(pin)
     return {"message": "Pin reportado exitosamente"}
+
+@router.get("/")
+def get_pins(session: SessionDep):
+    return session.query(Pin).filter(Pin.reportado == False).all()

@@ -4,8 +4,9 @@ from typing import Optional
 
 class Usuario(SQLModel, table=True):
     id: Optional[int] = SQLField(default=None, primary_key=True)
-    email: str
-    password: str
+    email: EmailStr = SQLField(index=True)
+    password: Optional[str] = None
+    google_id: Optional[str] = None
 
 class UsuarioCreate(BaseModel):
     email: EmailStr
