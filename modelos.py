@@ -1,11 +1,13 @@
 from pydantic import BaseModel, EmailStr, Field
-from sqlmodel import SQLModel, Field as SQLField
+from sqlmodel import SQLModel, Field as SQLField, AutoString
 from typing import Optional
 
 class Usuario(SQLModel, table=True):
-    id: Optional[int] = SQLField(default=None, primary_key=True)
-    email: EmailStr = SQLField(index=True)
-    password: Optional[str] = None
+    id: Optional[int] = Field(default=None, primary_key=True)
+    
+    # CORRECCIÓN AQUÍ: Forzamos a SQLAlchemy a tratar EmailStr como un String/Texto
+    email: str = Field(unique=True, index=True) 
+    password: str
     google_id: Optional[str] = None
 
 class UsuarioCreate(BaseModel):

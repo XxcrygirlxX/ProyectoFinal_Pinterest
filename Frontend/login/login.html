@@ -20,14 +20,14 @@
 
             <form id="loginForm" class="login-form">
                 <div class="input-group">
-                    <label for="email">Correo electrónico</label>
-                    <input type="email" id="email" placeholder="Correo electrónico" required>
+                    <label for="loginUser">Correo electrónico o Usuario</label>
+                    <input type="text" id="loginUser" placeholder="Correo o usuario de Active Directory" required>
                     <span class="error-message" id="emailError"></span>
                 </div>
 
                 <div class="input-group">
-                    <label for="password">Contraseña</label>
-                    <input type="password" id="password" placeholder="Contraseña" required>
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="Contraseña" required>
                     <span class="error-message" id="passwordError"></span>
                 </div>
 
@@ -36,12 +36,34 @@
                 <button type="submit" class="btn-submit">Iniciar sesión</button>
             </form>
 
+            <div class="divider" style="text-align: center; margin: 20px 0; color: #767676; font-size: 14px; position: relative; width: 100%;">
+                <span style="background: #ffffff; padding: 0 10px; position: relative; z-index: 1;">O</span>
+                <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #e1e1e1; z-index: 0;"></div>
             </div>
+
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="signin_with"
+                 data-shape="pill"
+                 data-logo_alignment="left"
+                 data-width="270"
+                 style="display: flex; justify-content: center; width: 100%; margin-bottom: 10px;">
+            </div>
+
             <footer class="login-footer">
                 <p>¿Aún no estás en Pinterest? <a href="../register/register.html" id="toRegister">Regístrate</a></p>
             </footer>
         </div>
     </main>
+
+    <div id="g_id_onload"
+         data-client_id="62688628748-80so2m75d6mtoeortm12mt1pf4stdup6.apps.googleusercontent.com"
+         data-callback="handleGoogleLoginResponse"
+         data-auto_prompt="false">
+    </div>
+
     <script src="login.js"></script>
 </body>
 </html>

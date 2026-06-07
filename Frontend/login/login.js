@@ -1,87 +1,74 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  const emailInput = document.getElementById("email");
-  const passwordInput = document.getElementById("password");
-  const toRegisterLink = document.getElementById("toRegister");
+// ========================================================
+// 1. CALLBACK GLOBAL DE GOOGLE SIGN-IN (Fuera del DOMContentLoaded)
+// ========================================================
+window.handleGoogleLoginResponse = function(response) {
+    console.log("JWT de Login con Google obtenido:", response.credential);
 
-  loginForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    resetErrors();
-
-    let isValid = true;
-
-    if (!validateEmail(emailInput.value)) {
-      showError(
-        "emailError",
-        "El correo electrónico que ingresaste no es válido.",
-      );
-      isValid = false;
-    }
-
-    if (passwordInput.value.trim().length < 6) {
-      showError(
-        "passwordError",
-        "La contraseña debe tener al menos 6 caracteres.",
-      );
-      isValid = false;
-    }
-
-    if (isValid) {
-      console.log("Datos enviados:", {
-        email: emailInput.value,
-        password: passwordInput.value,
-      });
-    }
-  });
-
-  toRegisterLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    console.log("Redirigiendo a la vista de Registro...");
-    window.location.href = "../register/register.html";
-  });
-
-  function validateEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-  }
-
-  function showError(elementId, message) {
-    const errorSpan = document.getElementById(elementId);
-    errorSpan.textContent = message;
-    errorSpan.style.display = "block";
-  }
-
-  function resetErrors() {
-    const errorSpans = document.querySelectorAll(".error-message");
-    errorSpans.forEach((span) => {
-      span.textContent = "";
-      span.style.display = "none";
+    fetch('http://127.0.0.1:8000/api/v1/auth/google-login-register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ credential: response.credential })
+    })
+    .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Error al procesar la autenticación de Google en el servidor.');
+    })
+    .then(data => {
+        alert(`¡Ingreso con Google exitoso! Bienvenido ${data.datos_sesion.nombre_usuario}`);
+        
+        localStorage.setItem('usuario', data.datos_sesion.nombre_usuario);
+        localStorage.setItem('rol', data.datos_sesion.rol_en_app);
+        localStorage.setItem('permisos', JSON.stringify(data.datos_sesion.permisos_pinterest));
+        
+        window.location.href = "../index.html";
+    })
+    .catch(error => {
+        alert(error.message);
     });
-  }
-});
-window.onload = function () {
-    google.accounts.id.initialize({
-        client_id: "62688628748-80so2m75d6mtoeortm12mt1pf4stdup6.apps.googleusercontent.com", 
-        callback: handleCredentialResponse
-    });
-
-    google.accounts.id.renderButton(
-        document.getElementById("googleButton"),
-        { 
-            theme: "outline", 
-            size: "large", 
-            type: "standard",
-            shape: "pill",      
-            text: "signin_with", 
-            logo_alignment: "left",
-            width: 384 
-        }
-    );
 };
 
-function handleCredentialResponse(response) {
-    console.log("Encoded JWT ID token: " + response.credential);
+// ========================================================
+// 2. INICIO DE SESIÓN CENTRALIZADO ACTIVE DIRECTORY (UIDE.A)
+// ========================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('loginForm');
 
-    alert("Login con Google exitoso en el cliente");
-}
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Evita recargas imprevistas
+            
+            const usernameInput = document.getElementById('loginUser').value;
+            const passwordInput = document.getElementById('loginPassword').value;
+
+            const formData = new FormData();
+            formData.append('username', usernameInput);
+            formData.append('password', passwordInput);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/v1/auth/login-uide', {
+                    method: 'POST',
+                    body: formData 
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Error en la autenticación centralizada.');
+                }
+
+                const data = await response.json();
+                
+                localStorage.setItem('usuario', data.datos_sesion.nombre_usuario);
+                localStorage.setItem('rol', data.datos_sesion.rol_en_app);
+                localStorage.setItem('permisos', JSON.stringify(data.datos_sesion.permisos_pinterest));
+
+                alert(`Bienvenido, ${data.datos_sesion.nombre_usuario}. Rol: ${data.datos_sesion.rol_en_app}`);
+                window.location.href = "../index.html";
+
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+    }
+});

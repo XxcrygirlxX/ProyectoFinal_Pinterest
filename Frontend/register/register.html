@@ -6,7 +6,7 @@
     <title>Pinterest - Regístrate</title>
     <link rel="stylesheet" href="register_style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
 </head>
 <body>
 
@@ -31,18 +31,47 @@
                     <span class="error-message" id="regPasswordError"></span>
                 </div>
 
+                <div class="input-group">
+                    <label for="regBirthdate">Fecha de nacimiento</label>
+                    <input type="date" id="regBirthdate" required>
+                    <span class="error-message" id="regBirthdateError"></span>
+                </div>
+
                 <p class="terms-text">
-                    Al continuar, aceptas las **Condiciones del servicio** de Pinterest y reconoces que leíste la **Política de privacidad**.
+                    Al continuar, aceptas las <strong>Condiciones del servicio</strong> de Pinterest y reconoces que leíste la <strong>Política de privacidad</strong>.
                 </p>
 
                 <button type="submit" class="btn-submit">Continuar</button>
+                
+                <div class="divider" style="text-align: center; margin: 18px 0; color: #767676; font-size: 14px; position: relative;">
+                    <span style="background: #ffffff; padding: 0 10px; position: relative; z-index: 1;">O</span>
+                    <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #e1e1e1; z-index: 0;"></div>
+                </div>
+
+                <div id="g_id_onload"
+                     data-client_id="62688628748-80so2m75d6mtoeortm12mt1pf4stdup6.apps.googleusercontent.com"
+                     data-callback="handleGoogleRegisterResponse"
+                     data-auto_prompt="false">
+                </div>
+
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-size="large"
+                     data-theme="outline"
+                     data-text="signup_with"
+                     data-shape="pill"
+                     data-logo_alignment="left"
+                     data-width="384"
+                     style="display: flex; justify-content: center; width: 100%;">
+                </div>
             </form>
 
-            <footer class="login-footer">
+            <footer class="login-footer" style="margin-top: 20px;">
                 <p>¿Ya eres miembro? <a href="../login/login.html" id="toLogin">Inicia sesión</a></p>
             </footer>
         </div>
     </main>
+
     <script src="register.js"></script>
 </body>
 </html>

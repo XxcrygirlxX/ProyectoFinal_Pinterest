@@ -3,8 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const emailInput = document.getElementById('regEmail');
     const passwordInput = document.getElementById('regPassword');
     const birthdateInput = document.getElementById('regBirthdate');
-    const toLoginLink = document.getElementById('toLogin');
 
+    // ==========================================
+    // 1. CONFIGURACIÓN E INTEGRACIÓN DE GOOGLE SIGN-IN
+    // ==========================================
     google.accounts.id.initialize({
         client_id: "62688628748-80so2m75d6mtoeortm12mt1pf4stdup6.apps.googleusercontent.com", 
         callback: handleGoogleRegisterResponse
@@ -16,85 +18,107 @@ document.addEventListener('DOMContentLoaded', () => {
             theme: "outline", 
             size: "large", 
             type: "standard",
-            shape: "pill",       
-            text: "signup_with", 
+            shape: "pill",      
+            text: "signup_with", // Muestra el texto "Continuar con Google" de manera oficial
             logo_alignment: "left",
             width: 384 
         }
     );
 
+    // Procesa el token enviado por Google y despacha el correo desde el Backend
     function handleGoogleRegisterResponse(response) {
         console.log("JWT de Registro con Google obtenido:", response.credential);
 
-        alert("¡Registro con Google exitoso en el cliente! Cuenta lista para vincular.");
+        fetch('http://127.0.0.1:8000/api/v1/auth/google-login-register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ credential: response.credential })
+        })
+        .then(res => {
+            if (res.ok) return res.json();
+            throw new Error('Error al procesar la autenticación de Google en el servidor.');
+        })
+        .then(data => {
+            alert(`¡Ingreso con Google exitoso! Bienvenido ${data.datos_sesion.nombre_usuario}`);
+            
+            // Guardar datos en localStorage para persistencia de la sesión
+            localStorage.setItem('usuario', data.datos_sesion.nombre_usuario);
+            localStorage.setItem('rol', data.datos_sesion.rol_en_app);
+            localStorage.setItem('permisos', JSON.stringify(data.datos_sesion.permisos_pinterest));
+            
+            window.location.href = "../index.html";
+        })
+        .catch(error => {
+            alert(error.message);
+        });
     }
 
-    registerForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        resetErrors();
-        let isValid = true;
+    // ==========================================
+    // 2. REGISTRO LOCAL DE USUARIOS (FASTAPI + SQLITE)
+    // ==========================================
+    if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Evita recargas inesperadas en el envío clásico
+            
+            // Aquí puedes llamar a tu lógica existente de validación de edad o campos
+            let isValid = true; 
+            limpiarErrores();
 
-        if (!validateEmail(emailInput.value)) {
-            showError('regEmailError', 'Introduce un correo electrónico válido.');
-            isValid = false;
-        }
+            // Validación básica de ejemplo antes de despachar al fetch
+            if (!emailInput.value.includes('@')) {
+                showError('regEmailError', 'Por favor ingresa un correo válido.');
+                isValid = false;
+            }
 
-        if (passwordInput.value.trim().length < 6) {
-            showError('regPasswordError', 'La contraseña debe tener al menos 6 caracteres.');
-            isValid = false;
-        }
+            if (passwordInput.value.length < 4) {
+                showError('regPasswordError', 'La contraseña debe tener al menos 4 caracteres.');
+                isValid = false;
+            }
 
-        if (!birthdateInput.value) {
-            showError('regBirthdateError', 'Por favor, ingresa tu fecha de nacimiento.');
-            isValid = false;
-        } else if (!validateAge(birthdateInput.value)) {
-            showError('regBirthdateError', 'Debes tener al menos 13 años para registrarte.');
-            isValid = false;
-        }
+            if (isValid) {
+                const nuevoUsuario = {
+                    email: emailInput.value,
+                    password: passwordInput.value
+                };
 
-        if (isValid) {
-            console.log('Registro exitoso. Datos capturados:', {
-                email: emailInput.value,
-                password: passwordInput.value,
-                birthdate: birthdateInput.value
-            });
-        }
-    });
-
-    toLoginLink.addEventListener('click', (e) => {
-        console.log('Navegando hacia la pantalla de inicio de sesión...');
-        window.location.href = "../login/login.html";
-    });
-
-    function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(String(email).toLowerCase());
+                // Enviar datos al endpoint de registro nativo de tu base de datos local
+                fetch('http://127.0.0.1:8000/api/v1/auth/register', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(nuevoUsuario)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('El correo ya se encuentra registrado o los datos son inválidos.');
+                })
+                .then(data => {
+                    alert('¡Registro completado con éxito!');
+                    window.location.href = "../login/login.html"; 
+                })
+                .catch(error => {
+                    showError('regEmailError', error.message);
+                });
+            }
+        });
     }
 
-    function validateAge(birthdateValue) {
-        const birthDate = new Date(birthdateValue);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-        
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age >= 13;
-    }
-
+    // Funciones auxiliares para el manejo visual de errores estéticos
     function showError(elementId, message) {
         const errorSpan = document.getElementById(elementId);
-        errorSpan.textContent = message;
-        errorSpan.style.display = 'block';
+        if (errorSpan) {
+            errorSpan.textContent = message;
+            errorSpan.style.display = 'block';
+        }
     }
 
-    function resetErrors() {
-        const errorSpans = document.querySelectorAll('.error-message');
-        errorSpans.forEach(span => {
-            span.textContent = '';
-            span.style.display = 'none';
-        });
+    function limpiarErrores() {
+        const errores = document.querySelectorAll('.error-message');
+        errores.forEach(err => err.textContent = '');
     }
 });
