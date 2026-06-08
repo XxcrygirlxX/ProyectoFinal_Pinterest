@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pinterest - Descubrir ideas</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
 <body>
@@ -15,25 +16,45 @@
         <i class="fa-brands fa-pinterest"></i>
       </a>
       <button class="nav-btn active">Inicio</button>
+      <button class="nav-btn" id="btnNavCrear">Crear</button>
     </div>
 
     <div class="nav-search">
       <i class="fa-solid fa-magnifying-glass search-icon"></i>
-      <input type="text" placeholder="Buscar ideas, ropa, decoración..." id="searchInput" />
+      <input type="text" placeholder="Buscar ideas, ropa, decoración del laboratorio..." id="searchInput" />
     </div>
 
     <div class="nav-right">
       <a href="./login/login.html" class="nav-auth-btn btn-login">Iniciar sesión</a>
       <a href="./register/register.html" class="nav-auth-btn btn-register">Registrarse</a>
 
-      <a href="./profile/profile.html" class="nav-profile-icon" title="Ver mi Perfil">
+      <a href="./profile/profile.html" class="nav-profile-icon" title="Ver mi Perfil" style="display: none;">
         <i class="fa-solid fa-user"></i>
       </a>
     </div>
   </header>
+  
   <main class="feed-container">
     <div class="masonry-grid" id="pinGrid"></div>
   </main>
+
+  <div id="modalCrearPin" class="modal-overlay" style="display: none;">
+    <form id="formCrearPin" class="modal-create-card">
+        <h2>Crear nuevo Pin</h2>
+        
+        <label for="pinTitulo">Título del Pin:</label>
+        <input type="text" id="pinTitulo" placeholder="Dale un título llamativo a tu idea..." required>
+        
+        <label for="pinArchivo">Imagen o Video:</label>
+        <input type="file" id="pinArchivo" accept="image/*" required>
+        
+        <div class="modal-actions-row">
+            <button type="button" class="btn-modal-cancel" onclick="document.getElementById('modalCrearPin').style.display='none'">Cancelar</button>
+            <button type="submit" class="btn-modal-submit">Subir a Pinterest</button>
+        </div>
+    </form>
+  </div>
+  
   <script type="module" src="script.js"></script>
 </body>
 

@@ -1,266 +1,395 @@
-:root {
-    --pinterest-red: #e60023;
-    --pinterest-red-hover: #b6001a;
-    --text-dark: #111111;
-    --bg-light: #ffffff;
-    --bg-gray: #e9e9e9;
-    --bg-gray-hover: #e1e1e1;
-    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: var(--font-stack);
-    -webkit-font-smoothing: antialiased;
-}
-
+/* ==========================================================================
+   ESTILOS GENERALES Y CONFIGURACIÓN DE LA APLICACIÓN (MODO CLARO)
+   ========================================================================== */
 body {
-    background-color: var(--bg-light);
-    padding-top: 80px;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  background-color: #ffffff; /* Fondo blanco puro */
+  color: #111111; /* Texto oscuro principal */
 }
 
+/* ==========================================================================
+   BARRA DE NAVEGACIÓN (PINTEREST NAVBAR)
+   ========================================================================== */
 .pinterest-navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 80px;
-    background-color: var(--bg-light);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 4px 16px;
-    z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  z-index: 1000;
+  box-sizing: border-box;
+  border-bottom: 1px solid #efefef; /* Borde sutil gris claro */
 }
 
 .nav-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .nav-logo {
-    color: var(--pinterest-red);
-    font-size: 28px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.nav-logo:hover {
-    background-color: var(--bg-gray);
+  color: #e60023; /* Rojo Pinterest tradicional */
+  font-size: 24px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 .nav-btn {
-    background: none;
-    border: none;
-    padding: 12px 16px;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 24px;
-    cursor: pointer;
-    color: var(--text-dark);
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111111;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.nav-btn:hover {
+  background-color: #f0f0f0; /* Gris claro en hover */
 }
 
 .nav-btn.active {
-    background-color: var(--text-dark);
-    color: white;
+  background-color: #111111; /* Activo en contraste negro */
+  color: #ffffff;
 }
 
-.nav-btn:hover:not(.active) {
-    background-color: var(--bg-gray);
-}
-
+/* Buscador de la Barra */
 .nav-search {
-    flex: 1;
-    margin: 0 16px;
-    position: relative;
-    display: flex;
-    align-items: center;
+  flex: 1;
+  margin: 0 16px;
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .search-icon {
-    position: absolute;
-    left: 16px;
-    color: #767676;
-    font-size: 16px;
+  position: absolute;
+  left: 14px;
+  color: #767676;
+  font-size: 16px;
 }
 
 .nav-search input {
-    width: 100%;
-    height: 48px;
-    background-color: var(--bg-gray);
-    border: none;
-    border-radius: 24px;
-    padding-left: 44px;
-    padding-right: 16px;
-    font-size: 16px;
-    outline: none;
-    transition: background-color 0.2s;
-}
-
-.nav-search input:hover {
-    background-color: var(--bg-gray-hover);
+  width: 100%;
+  height: 40px;
+  border-radius: 20px;
+  border: none;
+  background-color: #e1e1e1; /* Fondo gris claro suave */
+  padding-left: 40px;
+  padding-right: 16px;
+  color: #111111;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
 
 .nav-search input:focus {
-    background-color: var(--bg-light);
-    border: 2px solid #0076d3;
+  outline: none;
+  background-color: #d6d6d6;
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
 }
 
 .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .nav-auth-btn {
-    text-decoration: none;
-    padding: 12px 16px;
-    font-size: 16px;
-    font-weight: 600;
-    border-radius: 24px;
-    transition: transform 0.1s ease;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 10px 16px;
+  border-radius: 24px;
+  transition: background-color 0.2s;
 }
 
 .btn-login {
-    background-color: var(--pinterest-red);
-    color: white;
+  background-color: #e60023;
+  color: #ffffff;
 }
 
 .btn-login:hover {
-    background-color: var(--pinterest-red-hover);
+  background-color: #b8001a;
 }
 
 .btn-register {
-    background-color: var(--bg-gray);
-    color: var(--text-dark);
+  background-color: #efefef;
+  color: #111111;
 }
 
 .btn-register:hover {
-    background-color: var(--bg-gray-hover);
+  background-color: #e1e1e1;
 }
 
+/* Icono redondo de Perfil Logueado */
 .nav-profile-icon {
-    color: var(--text-dark);
-    font-size: 20px;
-    background-color: var(--bg-gray);
-    padding: 12px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    transition: background-color 0.2s;
+  width: 36px;
+  height: 36px;
+  background-color: #784979; /* Tono morado corporativo suavizado */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
 .nav-profile-icon:hover {
-    background-color: var(--bg-gray-hover);
+  transform: scale(1.05);
 }
 
+/* ==========================================================================
+   CONTENEDOR DEL FEED MASONRY
+   ========================================================================== */
 .feed-container {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 0 24px;
+  margin-top: 80px;
+  padding: 0 16px;
+  display: flex;
+  justify-content: center;
 }
 
 .masonry-grid {
-    column-count: 5; 
-    column-gap: 16px;
+  columns: 5 240px;
+  column-gap: 16px;
+  width: 100%;
+  max-width: 1260px;
 }
 
+/* Tarjeta Individual del Pin */
 .pin-card {
-    break-inside: avoid;
-    margin-bottom: 16px;
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: zoom-in;
+  break-inside: avoid;
+  margin-bottom: 16px;
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: zoom-in;
+  background-color: #f7f7f7;
+  border: 1px solid #eaeaea; /* Delimitación sutil para modo claro */
 }
 
 .pin-card img {
-    width: 100%;
-    display: block;
-    border-radius: 16px;
-    object-fit: cover;
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
+.pin-card:hover img {
+  transform: scale(1.03);
+}
+
+/* Capa superpuesta en Hover */
 .pin-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 12px;
-    opacity: 0;
-    transition: opacity 0.25s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25); /* Menos oscuro para el modo claro */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .pin-card:hover .pin-overlay {
-    opacity: 1;
+  opacity: 1;
 }
 
+/* Botón Guardar superior interno */
 .btn-save {
-    background-color: var(--pinterest-red);
-    color: white;
-    border: none;
-    padding: 10px 14px;
-    font-weight: 600;
-    font-size: 14px;
-    border-radius: 20px;
-    align-self: flex-end;
-    cursor: pointer;
-    transition: background-color 0.1s;
+  background-color: #e60023;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background-color 0.15s;
 }
 
 .btn-save:hover {
-    background-color: var(--pinterest-red-hover);
+  background-color: #b8001a;
 }
 
 .overlay-bottom {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
+/* Botones de acción inferiores */
 .btn-icon-action {
-    background-color: rgba(255, 255, 255, 0.85);
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--text-dark);
-    font-size: 14px;
-    transition: background-color 0.1s;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #111111;
+  font-size: 13px;
+  transition: background-color 0.15s, transform 0.15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .btn-icon-action:hover {
-    background-color: rgba(255, 255, 255, 1);
+  background-color: #ffffff;
+  transform: scale(1.05);
 }
 
-@media (max-width: 1200px) {
-    .masonry-grid { column-count: 4; }
+.btn-report {
+  color: #b8001a;
 }
 
-@media (max-width: 900px) {
-    .masonry-grid { column-count: 3; }
-    .nav-search { margin: 0 8px; }
+/* ==========================================================================
+   MODAL DE CREACIÓN DE PINES (ESTILO MODO CLARO LIMPIO)
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4); /* Fondo gris traslúcido suave */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  backdrop-filter: blur(8px);
 }
 
-@media (max-width: 600px) {
-    .masonry-grid { column-count: 2; }
-    .nav-btn, .btn-register { display: none; }
+/* Tarjeta del Formulario en Blanco */
+.modal-create-card {
+  background-color: #ffffff;
+  color: #111111;
+  padding: 32px;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); /* Sombra suave y realista */
+  box-sizing: border-box;
+  border: 1px solid #e1e1e1;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-create-card h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 24px;
+  text-align: center;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -0.5px;
+}
+
+.modal-create-card label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #5f5f5f; /* Texto secundario gris oscuro */
+  font-weight: 600;
+}
+
+/* Cajas de entrada */
+.modal-create-card input[type="text"] {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 2px solid #dcdcdc;
+  background-color: #fafafa;
+  color: #111111;
+  font-size: 15px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-create-card input[type="text"]:focus {
+  outline: none;
+  border-color: #e60023; /* Destaca en rojo Pinterest al escribir */
+  box-shadow: 0 0 0 3px rgba(230, 0, 35, 0.05);
+}
+
+/* Selector de archivos */
+.modal-create-card input[type="file"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #fafafa;
+  border: 2px dashed #cccccc;
+  border-radius: 12px;
+  color: #5f5f5f;
+  box-sizing: border-box;
+  cursor: pointer;
+  margin-bottom: 28px;
+}
+
+.modal-create-card input[type="file"]:hover {
+  border-color: #999999;
+  background-color: #f5f5f5;
+}
+
+/* Fila inferior de control */
+.modal-actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Botones específicos del Modal */
+.btn-modal-cancel {
+  background-color: #e1e1e1;
+  color: #111111;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-cancel:hover {
+  background-color: #d6d6d6;
+}
+
+.btn-modal-submit {
+  background-color: #e60023;
+  color: #ffffff;
+  border: none;
+  padding: 12px 22px;
+  border-radius: 24px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-modal-submit:hover {
+  background-color: #b8001a;
+}
+
+.btn-modal-submit:active {
+  transform: scale(0.97);
 }

@@ -1,81 +1,106 @@
+const API_URL = "http://127.0.0.1:8000";
+
 document.addEventListener('DOMContentLoaded', () => {
+    const usuarioId = localStorage.getItem('usuario_id');
     const profileName = document.getElementById('profileName');
     const profileBio = document.getElementById('profileBio');
-    const userAvatar = document.getElementById('userAvatar');
-    
-    const editModal = document.getElementById('editModal');
-    const btnOpenEdit = document.getElementById('btnOpenEdit');
-    const btnCancelEdit = document.getElementById('btnCancelEdit');
-    const editProfileForm = document.getElementById('editProfileForm');
-    
-    const inputName = document.getElementById('inputName');
-    const inputBio = document.getElementById('inputBio');
-    
     const userGrid = document.getElementById('userGrid');
+    const editProfileForm = document.getElementById('editProfileForm');
 
-    const uploadedPhotos = [
-        { id: 101, title: 'Mi espacio de trabajo', url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=500&auto=format&fit=crop&q=60' },
-        { id: 102, title: 'Fotografía Urbana', url: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=500&auto=format&fit=crop&q=60' },
-        { id: 103, title: 'Librerías y Enfoque', url: 'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?w=500&auto=format&fit=crop&q=60' },
-        { id: 104, title: 'Explorando la Montaña', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500&auto=format&fit=crop&q=60' },
-        { id: 105, title: 'Código de noche', url: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=500&auto=format&fit=crop&q=60' },
-        { id: 106, title: 'Minimalist Architecture', url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&auto=format&fit=crop&q=60' }
-    ];
+    if (!usuarioId) {
+        alert("Debes iniciar sesión para ver tu perfil");
+        window.location.href = '../login/login.html';
+        return;
+    }
 
-    function renderUserGrid() {
+    // 1. Cargar los pines creados por el usuario
+    async function cargarPinesCreados() {
+        try {
+            const response = await fetch(`${API_URL}/perfil/${usuarioId}/pines-creados`);
+            const pines = await response.json();
+            renderUserGrid(pines);
+        } catch (error) {
+            console.error("Error al cargar pines", error);
+        }
+    }
+
+    // 2. Renderizar los pines en la grilla
+    function renderUserGrid(pines) {
         userGrid.innerHTML = '';
-        uploadedPhotos.forEach(photo => {
+        if (pines.length === 0) {
+            userGrid.innerHTML = "<p>Aún no tienes pines.</p>";
+            return;
+        }
+
+        pines.forEach(pin => {
             const card = document.createElement('div');
             card.classList.add('pub-card');
-            
-            card.innerHTML = `
-                <img src="${photo.url}" alt="${photo.title}" loading="lazy">
-            `;
+            // Cargar imagen servida desde el backend
+            card.innerHTML = `<img src="http://127.0.0.1:8000${pin.source}" alt="${pin.titulo}" loading="lazy">`;
             
             card.addEventListener('click', () => {
-                const imgUrl = encodeURIComponent(photo.url);
-                const title = encodeURIComponent(photo.title);
-                window.location.href = `../previsualizacion/previsualizacion.html?img=${imgUrl}&title=${title}`;
+                window.location.href = `../previsualizacion/previsualizacion.html?img=${encodeURIComponent('http://127.0.0.1:8000'+pin.source)}&title=${encodeURIComponent(pin.titulo)}&id=${pin.id}`;
             });
-
             userGrid.appendChild(card);
         });
     }
 
-    btnOpenEdit.addEventListener('click', () => {
-        inputName.value = profileName.textContent;
-        inputBio.value = profileBio.textContent;
-        
-        editModal.classList.add('open');
-    });
-
-    function closeModal() {
-        editModal.classList.remove('open');
-    }
-
-    btnCancelEdit.addEventListener('click', closeModal);
-
-    editModal.addEventListener('click', (e) => {
-        if (e.target === editModal) closeModal();
-    });
-
-    editProfileForm.addEventListener('submit', (e) => {
+    // 3. Guardar cambios del perfil en la Base de Datos
+    editProfileForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        profileName.textContent = inputName.value.trim();
-        profileBio.textContent = inputBio.value.trim();
-        
-        if (inputName.value.length > 0) {
-            userAvatar.textContent = inputName.value.charAt(0).toUpperCase();
-        }
+        const inputName = document.getElementById('inputName').value;
+        const inputBio = document.getElementById('inputBio').value;
 
-        console.log('Perfil actualizado con éxito:', {
-            nuevoNombre: inputName.value,
-            nuevaBio: inputBio.value
-        });
-        
-        closeModal();
+        try {
+            const response = await fetch(`${API_URL}/perfil/${usuarioId}?nombre=${inputName}&biografia=${inputBio}`, {
+                method: 'PUT'
+            });
+            if (response.ok) {
+                profileName.textContent = inputName;
+                profileBio.textContent = inputBio;
+                document.getElementById('editModal').classList.remove('open');
+                alert("Perfil actualizado");
+            }
+        } catch (error) {
+            console.error("Error al actualizar", error);
+        }
     });
 
-    renderUserGrid();
+    cargarPinesCreados();
+});
+
+// Abrir el modal
+document.querySelectorAll('.nav-btn')[1].addEventListener('click', () => {
+    document.getElementById('modalCrearPin').style.display = 'flex';
+});
+
+// Enviar el archivo al backend
+document.getElementById('formCrearPin').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const titulo = document.getElementById('pinTitulo').value;
+    const archivo = document.getElementById('pinArchivo').files[0];
+    
+    // IMPORTANTE: Para enviar archivos no se usa JSON, se usa FormData
+    const formData = new FormData();
+    formData.append('titulo', titulo);
+    formData.append('file', archivo);
+
+    try {
+        const res = await fetch(`${API_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (res.ok) {
+            alert("Pin creado exitosamente (Aprobado por IA)");
+            document.getElementById('modalCrearPin').style.display = 'none';
+            cargarPines(); // Recargar el feed
+        } else {
+            const error = await res.json();
+            alert(`Error: ${error.detail}`); // Aquí saltará si es NSFW o Mala Palabra
+        }
+    } catch (err) {
+        console.error(err);
+    }
 });
