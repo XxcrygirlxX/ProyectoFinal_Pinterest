@@ -1,37 +1,129 @@
-@import url('../login/login_style.css');
-
-.input-group input[type="date"] {
-    color: var(--text-muted);
+:root {
+    --bg-pink: #fff5f6;
+    --card-white: #ffffff;
+    --text-dark: #3a2226;
+    --text-muted: #8a7377;
+    --pink-accent: #ff8fa3;
+    --pink-dark: #ff4d6d;
+    --border-soft: #ffe3e8;
 }
 
-.input-group input[type="date"]:focus {
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-pink);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     color: var(--text-dark);
 }
 
-.terms-text {
-    font-size: 11px;
-    color: var(--text-muted);
-    line-height: 1.4;
-    margin: 8px 0;
+.register-container {
+    background-color: var(--card-white);
+    padding: 2.5rem;
+    border-radius: 30px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 30px rgba(255, 143, 163, 0.08);
+    border: 1px solid var(--border-soft);
     text-align: center;
 }
 
-.terms-text b, .terms-text strong {
-    color: var(--text-dark);
-    cursor: pointer;
+.brand-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
 }
 
-.terms-text b:hover, .terms-text strong:hover {
-    text-decoration: underline;
+.brand-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--pink-dark);
+    margin: 0;
+}
+
+.register-logo-icon {
+    font-size: 1.8rem;
+    color: var(--pink-accent);
+}
+
+h3 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
 }
 
 .subtitle {
-    margin-bottom: 24px;
-}
-.login-form {
-    margin-bottom: 24px; 
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    margin-bottom: 1.5rem;
 }
 
-.login-footer {
-    margin-top: 12px;
+.input-group {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.input-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 14px;
+    border: 1px solid var(--border-soft);
+    background-color: #fffafb;
+    outline: none;
+    font-size: 0.92rem;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--pink-accent);
+    background-color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 143, 163, 0.2);
+}
+
+.btn-register {
+    width: 100%;
+    padding: 0.85rem;
+    background-color: var(--pink-dark);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 0.8rem;
+    transition: 0.3s;
+}
+
+.btn-register:hover {
+    background-color: #e63956;
+    box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
+}
+
+.register-footer {
+    margin-top: 1.5rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.register-footer a {
+    color: var(--pink-dark);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.register-footer a:hover {
+    text-decoration: underline;
 }

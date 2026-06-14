@@ -1,31 +1,21 @@
-from fastapi import APIRouter
-from sqlmodel import select
-from db import SessionDep
-from modelos import Usuario, Pin, PinGuardado
+from fastapi import APIRouter, Depends, HTTPException
+from sqlmodel import Session, select
+from db import get_session
+from modelos import Usuario
 
-router = APIRouter()
+# Cambiamos el nombre a 'router' para que combine perfectamente con main.py
+router = APIRouter(
+    prefix="/users",
+    tags=["Usuarios"]
+)
 
-# Editar perfil (biografía, nombre, foto)
-@router.put("/perfil/{usuario_id}")
-def editar_perfil(usuario_id: int, nombre: str, biografia: str, session: SessionDep):
-    usuario = session.get(Usuario, usuario_id)
+@router.get("", response_model=list[Usuario])
+def listar_usuarios(session: Session = Depends(get_session)):
+    return session.exec(select(Usuario)).all()
+
+@router.get("/{user_id}", response_model=Usuario)
+def obtener_usuario(user_id: int, session: Session = Depends(get_session)):
+    usuario = session.get(Usuario, user_id)
     if not usuario:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    
-    usuario.nombre = nombre
-    usuario.biografia = biografia
-    session.add(usuario)
-    session.commit()
-    return {"message": "Perfil actualizado", "usuario": usuario}
-
-# Obtener los pines CREADOS por el usuario
-@router.get("/perfil/{usuario_id}/pines-creados")
-def pines_creados(usuario_id: int, session: SessionDep):
-    statement = select(Pin).where(Pin.usuario_id == usuario_id)
-    return session.exec(statement).all()
-
-# Obtener los pines GUARDADOS por el usuario
-@router.get("/perfil/{usuario_id}/pines-guardados")
-def pines_guardados(usuario_id: int, session: SessionDep):
-    statement = select(PinGuardado).where(PinGuardado.usuario_id == usuario_id)
-    return session.exec(statement).all()
+        raise HTTPException(status_code=404, detail="Usuario no encontrado.")
+    return usuario

@@ -1,152 +1,179 @@
-import requests
-import json
 import os
-from fastapi import APIRouter, HTTPException, status
-from typing import List
-from db import SessionDep
-from modelos import Pin, Comentario
-from sqlmodel import select
-import shutil
-from fastapi import APIRouter, HTTPException, status, UploadFile, File, Form
-from modelos import PinGuardado, Tablero
+import json
+import sys
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from sqlmodel import Session, select
+from typing import Optional
 
-os.makedirs("uploads", exist_ok=True)
+from db import get_session
+from modelos import Pin, Comentario, Usuario, Reporte
 
-router = APIRouter(prefix="/pins", tags=["pins"])
+router = APIRouter(prefix="/pins", tags=["Pines"])
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+WORDS_JSON_PATH = os.path.join(BASE_DIR, "Malas_Palabras", "words.json")
+MODERACION_DIR = os.path.join(BASE_DIR, "Moderacion_IA")
+
+if MODERACION_DIR not in sys.path:
+    sys.path.insert(0, MODERACION_DIR)
+
+try:
+    from nsfw_detector.predict import predict_image
+    print("✅ [IA CENTRAL] Servidor enlazado con éxito a TensorFlow.")
+except Exception as e:
+    print(f"⚠️ [AVISO CRÍTICO] La IA no pudo conectarse: {e}")
+    # Si la IA se rompe, no dejamos pasar NADA por seguridad
+    def predict_image(path):
+        raise Exception("Motor de Inteligencia Artificial apagado o desconectado.")
+
+def verificar_texto_ofensivo(texto: str) -> bool:
+    if not texto or not os.path.exists(WORDS_JSON_PATH):
+        return False
+    try:
+        with open(WORDS_JSON_PATH, "r", encoding="utf-8") as f:
+            datos = json.load(f)
+            palabras_prohibidas = datos if isinstance(datos, list) else datos.get("words", [])
+            texto_limpio = texto.lower().strip()
+            for palabra in palabras_prohibidas:
+                if palabra.lower().strip() in texto_limpio:
+                    return True
+    except Exception as e:
+        print(f"Error procesando el filtro de vocabulario: {e}")
+    return False
+
+@router.get("")
+def listar_pines(categoria: Optional[str] = None, session: Session = Depends(get_session)):
+    query = select(Pin).where(Pin.reportado == False)
+    if categoria and categoria.lower().strip() != "todas":
+        query = query.where(Pin.categoria == categoria.lower().strip())
+    return session.exec(query).all()
+
+@router.get("/{pin_id}")
+def obtener_pin(pin_id: int, session: Session = Depends(get_session)):
+    pin = session.get(Pin, pin_id)
+    if not pin or pin.reportado:
+        raise HTTPException(status_code=404, detail="El Pin no está disponible.")
+    return pin
 
 @router.post("/upload")
-async def crear_pin_con_archivo(
-    session: SessionDep,
+async def subir_pin(
     titulo: str = Form(...),
-    file: UploadFile = File(...)
+    descripcion: str = Form(...),
+    categoria: str = Form(...), 
+    usuario_id: int = Form(...),
+    file: UploadFile = File(...),
+    session: Session = Depends(get_session)
 ):
-    # 1. Moderación Textual (Malas Palabras)
-    if verificar_politica_palabras(titulo):
-        raise HTTPException(status_code=400, detail="El título contiene malas palabras.")
+    if verificar_texto_ofensivo(titulo) or verificar_texto_ofensivo(descripcion):
+        raise HTTPException(status_code=400, detail="Fyntasy bloqueó la publicación por lenguaje inapropiado.")
 
-    # 2. Guardar el archivo localmente
-    file_path = f"uploads/{file.filename}"
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    cat_limpia = categoria.lower().strip()
+    if cat_limpia not in ["paisajes", "entretenimiento", "chill"]:
+        raise HTTPException(status_code=400, detail="Categoría inválida.")
+
+    os.makedirs("uploads", exist_ok=True)
+    nombre_seguro = f"user_{usuario_id}_{file.filename.replace(' ', '_')}"
+    ruta_archivo = os.path.join("uploads", nombre_seguro)
     
-    # URL local para acceder a la imagen (Asegúrate de servir la carpeta uploads en main.py)
-    # NOTA: Si Moderacion_IA está en Docker, usar 'host.docker.internal' en vez de localhost
-    file_url = f"http://127.0.0.1:8000/uploads/{file.filename}"
+    # RUTA ABSOLUTA PARA QUE LA IA NUNCA SE PIERDA
+    ruta_absoluta = os.path.abspath(ruta_archivo)
 
-    # 3. Filtro de Moderación Visual (IA - NSFW Detector)
+    with open(ruta_absoluta, "wb") as f:
+        contenido = await file.read()
+        f.write(contenido)
+
+    # B. ESCANEO IMPLACABLE DE IA
     try:
-        res = requests.post("http://localhost:3000/predict", json={"url": file_url}, timeout=3)
-        if res.status_code == 200 and res.json().get("is_nsfw"):
-            os.remove(file_path) # Borrar archivo si es obsceno
-            raise HTTPException(status_code=400, detail="Imagen rechazada: Detectado contenido NSFW.")
-    except requests.RequestException:
-        pass # Si el contenedor Docker está apagado, lo deja pasar (como ya tenías)
+        res_ia = predict_image(ruta_absoluta)
+        predicciones = res_ia.get(ruta_absoluta, res_ia) if isinstance(res_ia, dict) else res_ia
+        
+        bloqueado = False
+        motivo = ""
 
-    # 4. Guardar en Base de Datos
-    nuevo_pin = Pin(titulo=titulo, source=f"/uploads/{file.filename}", es_publico=True, reportado=False)
+        lista_preds = predicciones if isinstance(predicciones, list) else [{"className": k, "probability": v} for k, v in predicciones.items()]
+        
+        for p in lista_preds:
+            cat_name = p.get("className")
+            prob = p.get("probability", 0)
+            
+            # UMBRAL SÚPER ESTRICTO: Si detecta más del 15% de obscenidad, bloquea
+            if cat_name in ["Porn", "Hentai", "Sexy"] and prob > 0.15:
+                bloqueado = True
+                motivo = f"{cat_name} al {prob*100:.1f}%"
+                break
+                
+        if bloqueado:
+            if os.path.exists(ruta_absoluta):
+                os.remove(ruta_absoluta) # Destruye el archivo obsceno
+            print(f"🛑 [IA SEGURIDAD] Imagen RECHAZADA. Motivo: {motivo}")
+            raise HTTPException(status_code=400, detail=f"La IA de Fyntasy rechazó tu foto de forma automática por contenido detectado como {motivo}.")
+        else:
+            print("✅ [IA SEGURIDAD] Imagen limpia y aprobada.")
+
+    except Exception as e:
+        if isinstance(e, HTTPException): raise e
+        # Si la IA falla, borramos el archivo para prevenir y avisamos
+        if os.path.exists(ruta_absoluta): os.remove(ruta_absoluta)
+        print(f"❌ [ERROR IA] La red neuronal colapsó al leer la imagen: {e}")
+        raise HTTPException(status_code=500, detail="Error en el motor de seguridad. No se pudo procesar la foto.")
+
+    usuario = session.get(Usuario, usuario_id)
+    username_autor = usuario.username if usuario else "Fyntasy_Girl"
+
+    nuevo_pin = Pin(
+        titulo=titulo, descripcion=descripcion, categoria=cat_limpia,
+        source=f"uploads/{nombre_seguro}", usuario_id=usuario_id, username_autor=username_autor
+    )
     session.add(nuevo_pin)
     session.commit()
     session.refresh(nuevo_pin)
-    return nuevo_pin
+    return {"message": "Publicado con éxito", "pin": nuevo_pin}
 
-def verificar_politica_palabras(texto_titulo: str) -> bool:
-    """Retorna True si encuentra un insulto configurado en el laboratorio"""
-    try:
-        # Localiza la ruta absoluta del diccionario words.json del proyecto
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        ruta_json = os.path.join(base_dir, "..", "..", "Malas_Palabras", "words.json")
-        
-        with open(ruta_json, "r", encoding="utf-8") as f:
-            palabras_prohibidas = json.load(f)
-            
-        palabras_ingresadas = texto_titulo.lower().split()
-        for palabra in palabras_ingresadas:
-            if palabra in palabras_prohibidas:
-                return True
-        return False
-    except Exception:
-        return False # Si el archivo no se lee, no detiene la ejecución de pruebas
+@router.get("/{pin_id}/comments")
+def listar_comentarios(pin_id: int, session: Session = Depends(get_session)):
+    return session.exec(select(Comentario).where(Comentario.pin_id == pin_id)).all()
 
-@router.post("/", response_model=Pin)
-def post_pin(pin: Pin, session: SessionDep):
-    # 1. Filtro de Moderación Textual (Malas Palabras)
-    if verificar_politica_palabras(pin.titulo):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Contenido bloqueado: El título infringe las normas de vocabulario del laboratorio."
-        )
-
-    # 2. Filtro de Moderación Visual (IA - NSFW Detector de imágenes)
-    try:
-        res = requests.post("http://localhost:3000/predict", json={"url": pin.source}, timeout=3)
-        if res.status_code == 200 and res.json().get("is_nsfw"): 
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                detail="Imagen rechazada: El clasificador de IA (.h5) detectó contenido NSFW."
-            )
-    except requests.RequestException: 
-        pass # Si el contenedor Docker de la IA no está encendido, permite pasar para no trabar el desarrollo
-    
-    pin.reportado = False
-    session.add(pin)
+@router.post("/{pin_id}/comments")
+def agregar_comentario(
+    pin_id: int, texto: str = Form(...), usuario_id: int = Form(...),
+    username_autor: str = Form(...), session: Session = Depends(get_session)
+):
+    if verificar_texto_ofensivo(texto):
+        raise HTTPException(status_code=400, detail="Tu comentario fue rechazado por palabras obscenas.")
+    nuevo_c = Comentario(texto=texto, pin_id=pin_id, usuario_id=usuario_id, username_autor=username_autor)
+    session.add(nuevo_c)
     session.commit()
-    session.refresh(pin)
-    return pin
+    session.refresh(nuevo_c)
+    return {"message": "Comentario aprobado", "comentario": nuevo_c}
 
-@router.get("/", response_model=List[Pin])
-def get_pins(session: SessionDep):
-    # Trae únicamente los pines que no han sido reportados por la comunidad
-    statement = select(Pin).where(Pin.reportado == False)
-    results = session.exec(statement)
-    return results.all()
+@router.get("/user/{usuario_id}")
+def obtener_pines_usuario(usuario_id: int, session: Session = Depends(get_session)):
+    return session.exec(select(Pin).where(Pin.usuario_id == usuario_id)).all()
 
-@router.delete("/{pin_id}")
-def delete_pin(pin_id: int, session: SessionDep):
+# NUEVO SISTEMA DE REPORTES CON TRES STRIKES
+@router.post("/{pin_id}/report")
+def reportar_pin(pin_id: int, usuario_id: int = Form(...), session: Session = Depends(get_session)):
     pin = session.get(Pin, pin_id)
-    if not pin: 
-        raise HTTPException(status_code=404, detail="Pin no encontrado")
-    session.delete(pin)
-    session.commit()
-    return {"message": "Borrado"}
+    if not pin: raise HTTPException(status_code=404, detail="Pin no encontrado.")
 
-@router.post("/{pin_id}/comentarios")
-def post_comentario(pin_id: int, comentario: Comentario, session: SessionDep):
-    comentario.pin_id = pin_id
-    session.add(comentario)
-    session.commit()
-    session.refresh(comentario)
-    return comentario
+    # Validamos si este usuario ya reportó este pin antes
+    reporte_existente = session.exec(select(Reporte).where(Reporte.pin_id == pin_id, Reporte.usuario_id == usuario_id)).first()
+    if reporte_existente:
+        return {"message": "Ya has reportado este pin previamente. Está bajo auditoría de Fyntasy."}
 
-@router.patch("/{pin_id}/reportar")
-def reportar_pin(pin_id: int, session: SessionDep):
-    pin = session.get(Pin, pin_id)
-    if not pin: 
-        raise HTTPException(status_code=404, detail="Pin no encontrado")
+    # Creamos el nuevo reporte
+    nuevo_reporte = Reporte(pin_id=pin_id, usuario_id=usuario_id)
+    session.add(nuevo_reporte)
+    session.commit()
+
+    # Contamos cuántos reportes totales tiene el Pin
+    total_reportes = len(session.exec(select(Reporte).where(Reporte.pin_id == pin_id)).all())
+
+    # Si llega a 3 reportes distintos, el pin se elimina/oculta de la comunidad
+    if total_reportes >= 3:
+        pin.reportado = True
+        session.add(pin)
+        session.commit()
+        return {"message": "El pin ha alcanzado 3 reportes de usuarios distintos y ha sido eliminado de la plataforma."}
     
-    pin.reportado = True
-    session.add(pin)
-    session.commit()
-    session.refresh(pin)
-    return {"message": "Pin reportado exitosamente"}
-
-# Ver los comentarios de un pin
-@router.get("/{pin_id}/comentarios")
-def get_comentarios_de_pin(pin_id: int, session: SessionDep):
-    statement = select(Comentario).where(Comentario.pin_id == pin_id)
-    return session.exec(statement).all()
-
-# Crear un Tablero (Carpeta)
-@router.post("/tableros")
-def crear_tablero(nombre: str, usuario_id: int, session: SessionDep):
-    nuevo_tablero = Tablero(nombre=nombre, usuario_id=usuario_id)
-    session.add(nuevo_tablero)
-    session.commit()
-    return {"message": "Tablero creado", "tablero": nuevo_tablero}
-
-# Guardar un pin en una carpeta (Tablero)
-@router.post("/{pin_id}/guardar")
-def guardar_pin(pin_id: int, tablero_id: int, usuario_id: int, session: SessionDep):
-    guardado = PinGuardado(pin_id=pin_id, tablero_id=tablero_id, usuario_id=usuario_id)
-    session.add(guardado)
-    session.commit()
-    return {"message": "Pin guardado en tu tablero!"}
+    return {"message": f"Reporte registrado con éxito. El pin lleva {total_reportes}/3 reportes para ser eliminado."}

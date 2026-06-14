@@ -1,395 +1,359 @@
-/* ==========================================================================
-   ESTILOS GENERALES Y CONFIGURACIÓN DE LA APLICACIÓN (MODO CLARO)
-   ========================================================================== */
+:root {
+    /* Paleta Fyntasy: Rosa Suave, Tierna y Elegante */
+    --bg-black: #fff5f6;       /* Reemplaza el fondo oscuro por un rosa pastel ultra suave */
+    --card-bg: #ffffff;       /* Las tarjetas ahora son blancas puras */
+    --text-white: #3a2226;     /* El texto principal ahora es un marrón morado muy elegante */
+    --text-gray: #8a7377;      /* Texto secundario suave */
+    --border-color: #ffe3e8;   /* Bordes sutiles y delicados */
+    
+    /* Acentos Rosa */
+    --pink-primary: #ff8fa3;   
+    --pink-dark: #ff4d6d;      
+    --pink-light: #fff0f3;     
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+}
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  background-color: #ffffff; /* Fondo blanco puro */
-  color: #111111; /* Texto oscuro principal */
+    background-color: var(--bg-black);
+    color: var(--text-white);
+    padding-top: 100px;
+    overflow-y: scroll;
 }
 
-/* ==========================================================================
-   BARRA DE NAVEGACIÓN (PINTEREST NAVBAR)
-   ========================================================================== */
-.pinterest-navbar {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  background-color: #ffffff;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  z-index: 1000;
-  box-sizing: border-box;
-  border-bottom: 1px solid #efefef; /* Borde sutil gris claro */
+/* Barra de Navegación Fija */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background-color: rgba(255, 255, 255, 0.92);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: 1000;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 2px 12px rgba(255, 143, 163, 0.04);
 }
 
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--pink-dark);
+    cursor: pointer;
 }
 
-.nav-logo {
-  color: #e60023; /* Rojo Pinterest tradicional */
-  font-size: 24px;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  text-decoration: none;
+.logo i {
+    font-size: 1.5rem;
+    color: var(--pink-primary);
 }
 
-.nav-btn {
-  background: none;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 24px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #111111;
-  cursor: pointer;
-  transition: background-color 0.2s;
+/* Buscador Estilo Pinterest */
+.search-bar {
+    flex: 1;
+    max-width: 650px;
+    margin: 0 2rem;
+    position: relative;
 }
 
-.nav-btn:hover {
-  background-color: #f0f0f0; /* Gris claro en hover */
+.search-bar i {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-gray);
 }
 
-.nav-btn.active {
-  background-color: #111111; /* Activo en contraste negro */
-  color: #ffffff;
+.search-bar input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 3.2rem;
+    background-color: #f7f1f2;
+    border: 1px solid transparent;
+    border-radius: 30px;
+    color: var(--text-white);
+    outline: none;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
 }
 
-/* Buscador de la Barra */
-.nav-search {
-  flex: 1;
-  margin: 0 16px;
-  position: relative;
-  display: flex;
-  align-items: center;
+.search-bar input:focus {
+    background-color: #ffffff;
+    border-color: var(--pink-primary);
+    box-shadow: 0 0 8px rgba(255, 143, 163, 0.2);
 }
 
-.search-icon {
-  position: absolute;
-  left: 14px;
-  color: #767676;
-  font-size: 16px;
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.nav-search input {
-  width: 100%;
-  height: 40px;
-  border-radius: 20px;
-  border: none;
-  background-color: #e1e1e1; /* Fondo gris claro suave */
-  padding-left: 40px;
-  padding-right: 16px;
-  color: #111111;
-  font-size: 16px;
-  box-sizing: border-box;
-  transition: background-color 0.2s, box-shadow 0.2s;
+.auth-flex {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.nav-search input:focus {
-  outline: none;
-  background-color: #d6d6d6;
-  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.05);
+/* Botones de Acción de la Navbar */
+.btn-nav {
+    background: none;
+    border: none;
+    color: var(--text-white);
+    font-weight: 600;
+    padding: 0.6rem 1.4rem;
+    cursor: pointer;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    transition: 0.3s ease;
 }
 
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.btn-nav.active, .btn-nav:hover {
+    background-color: var(--text-white);
+    color: #ffffff;
 }
 
-.nav-auth-btn {
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 15px;
-  padding: 10px 16px;
-  border-radius: 24px;
-  transition: background-color 0.2s;
+.btn-auth-outline {
+    background: none;
+    border: 2px solid var(--pink-primary);
+    color: var(--pink-dark);
+    padding: 0.6rem 1.4rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: 0.3s;
 }
 
-.btn-login {
-  background-color: #e60023;
-  color: #ffffff;
+.btn-auth-outline:hover {
+    background-color: var(--pink-light);
+    border-color: var(--pink-dark);
 }
 
-.btn-login:hover {
-  background-color: #b8001a;
+.user-badge {
+    color: var(--pink-dark);
+    font-weight: 600;
+    font-size: 0.95rem;
 }
 
-.btn-register {
-  background-color: #efefef;
-  color: #111111;
-}
-
-.btn-register:hover {
-  background-color: #e1e1e1;
-}
-
-/* Icono redondo de Perfil Logueado */
-.nav-profile-icon {
-  width: 36px;
-  height: 36px;
-  background-color: #784979; /* Tono morado corporativo suavizado */
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.nav-profile-icon:hover {
-  transform: scale(1.05);
-}
-
-/* ==========================================================================
-   CONTENEDOR DEL FEED MASONRY
-   ========================================================================== */
+/* Grid de Tarjetas (Tablero Estilo Pinterest) */
 .feed-container {
-  margin-top: 80px;
-  padding: 0 16px;
-  display: flex;
-  justify-content: center;
+    padding: 1.5rem;
+    max-width: 1650px;
+    margin: 0 auto;
 }
 
-.masonry-grid {
-  columns: 5 240px;
-  column-gap: 16px;
-  width: 100%;
-  max-width: 1260px;
+.pin-grid {
+    column-count: 5;
+    column-gap: 18px;
 }
 
-/* Tarjeta Individual del Pin */
+@media(max-width: 1200px) { .pin-grid { column-count: 4; } }
+@media(max-width: 900px) { .pin-grid { column-count: 3; } }
+@media(max-width: 600px) { .pin-grid { column-count: 2; } }
+
 .pin-card {
-  break-inside: avoid;
-  margin-bottom: 16px;
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  cursor: zoom-in;
-  background-color: #f7f7f7;
-  border: 1px solid #eaeaea; /* Delimitación sutil para modo claro */
+    background-color: var(--card-bg);
+    margin-bottom: 18px;
+    break-inside: avoid;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 12px rgba(138, 115, 119, 0.04);
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+}
+
+.pin-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 12px 24px rgba(255, 77, 109, 0.12);
 }
 
 .pin-card img {
-  width: 100%;
-  display: block;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+    width: 100%;
+    display: block;
 }
 
-.pin-card:hover img {
-  transform: scale(1.03);
+.pin-info {
+    padding: 1.2rem;
 }
 
-/* Capa superpuesta en Hover */
-.pin-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.25); /* Menos oscuro para el modo claro */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 12px;
-  box-sizing: border-box;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+.pin-info h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+    font-family: 'Playfair Display', serif;
+    color: var(--text-white);
 }
 
-.pin-card:hover .pin-overlay {
-  opacity: 1;
+.pin-info p {
+    font-size: 0.88rem;
+    color: var(--text-gray);
+    line-height: 1.4;
+    margin-bottom: 0.6rem;
 }
 
-/* Botón Guardar superior interno */
-.btn-save {
-  background-color: #e60023;
-  color: white;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-  align-self: flex-end;
-  transition: background-color 0.15s;
-}
-
-.btn-save:hover {
-  background-color: #b8001a;
-}
-
-.overlay-bottom {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-/* Botones de acción inferiores */
-.btn-icon-action {
-  background-color: rgba(255, 255, 255, 0.95);
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #111111;
-  font-size: 13px;
-  transition: background-color 0.15s, transform 0.15s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.btn-icon-action:hover {
-  background-color: #ffffff;
-  transform: scale(1.05);
+.pin-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.6rem;
+    border-top: 1px solid var(--pink-light);
+    padding-top: 0.6rem;
 }
 
 .btn-report {
-  color: #b8001a;
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: 0.2s;
 }
 
-/* ==========================================================================
-   MODAL DE CREACIÓN DE PINES (ESTILO MODO CLARO LIMPIO)
-   ========================================================================== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4); /* Fondo gris traslúcido suave */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  backdrop-filter: blur(8px);
+.btn-report:hover {
+    color: var(--pink-dark);
 }
 
-/* Tarjeta del Formulario en Blanco */
-.modal-create-card {
-  background-color: #ffffff;
-  color: #111111;
-  padding: 32px;
-  border-radius: 24px;
-  width: 90%;
-  max-width: 420px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); /* Sombra suave y realista */
-  box-sizing: border-box;
-  border: 1px solid #e1e1e1;
-  display: flex;
-  flex-direction: column;
+/* Modales (Caja de Publicación) */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(58, 34, 38, 0.4);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(8px);
 }
 
-.modal-create-card h2 {
-  margin-top: 0;
-  margin-bottom: 24px;
-  font-size: 24px;
-  text-align: center;
-  font-weight: 700;
-  color: #111111;
-  letter-spacing: -0.5px;
+.modal-content {
+    background-color: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 30px;
+    width: 92%;
+    max-width: 500px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 15px 40px rgba(58, 34, 38, 0.15);
 }
 
-.modal-create-card label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #5f5f5f; /* Texto secundario gris oscuro */
-  font-weight: 600;
+.close-btn {
+    float: right;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-gray);
 }
 
-/* Cajas de entrada */
-.modal-create-card input[type="text"] {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: 2px solid #dcdcdc;
-  background-color: #fafafa;
-  color: #111111;
-  font-size: 15px;
-  box-sizing: border-box;
-  margin-bottom: 20px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.close-btn:hover { color: var(--text-white); }
+
+.modal-content h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--text-white);
+    margin-bottom: 0.5rem;
 }
 
-.modal-create-card input[type="text"]:focus {
-  outline: none;
-  border-color: #e60023; /* Destaca en rojo Pinterest al escribir */
-  box-shadow: 0 0 0 3px rgba(230, 0, 35, 0.05);
+.form-group {
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Selector de archivos */
-.modal-create-card input[type="file"] {
-  width: 100%;
-  padding: 12px;
-  background-color: #fafafa;
-  border: 2px dashed #cccccc;
-  border-radius: 12px;
-  color: #5f5f5f;
-  box-sizing: border-box;
-  cursor: pointer;
-  margin-bottom: 28px;
+.form-group label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-white);
+    margin-bottom: 0.4rem;
 }
 
-.modal-create-card input[type="file"]:hover {
-  border-color: #999999;
-  background-color: #f5f5f5;
+.form-group input, .form-group textarea {
+    background-color: var(--pink-light);
+    border: 1px solid transparent;
+    padding: 0.8rem 1rem;
+    border-radius: 14px;
+    color: var(--text-white);
+    font-size: 0.92rem;
+    outline: none;
+    transition: 0.3s;
 }
 
-/* Fila inferior de control */
-.modal-actions-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
+.form-group textarea {
+    resize: none;
+    height: 90px;
 }
 
-/* Botones específicos del Modal */
-.btn-modal-cancel {
-  background-color: #e1e1e1;
-  color: #111111;
-  border: none;
-  padding: 12px 22px;
-  border-radius: 24px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
+.form-group input:focus, .form-group textarea:focus {
+    background-color: #ffffff;
+    border-color: var(--pink-primary);
 }
 
-.btn-modal-cancel:hover {
-  background-color: #d6d6d6;
+.ethical-card {
+    background-color: #fffafb;
+    border-left: 4px solid var(--pink-primary);
+    padding: 0.8rem 1rem;
+    margin-top: 1.4rem;
+    font-size: 0.82rem;
+    color: var(--text-gray);
+    line-height: 1.4;
+    border-radius: 0 12px 12px 0;
 }
 
-.btn-modal-submit {
-  background-color: #e60023;
-  color: #ffffff;
-  border: none;
-  padding: 12px 22px;
-  border-radius: 24px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+.btn-submit {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.9rem;
+    background-color: var(--pink-dark);
+    border: none;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.btn-modal-submit:hover {
-  background-color: #b8001a;
+.btn-submit:hover {
+    background-color: #e63956;
+    box-shadow: 0 5px 15px rgba(255, 77, 109, 0.3);
 }
 
-.btn-modal-submit:active {
-  transform: scale(0.97);
+/* Añade este fragmento al final de tu Frontend/style.css */
+.categories-bar {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0 0.5rem 0;
+    padding: 0 1rem;
+}
+
+.category-chip {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+    padding: 0.6rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(255, 143, 163, 0.02);
+}
+
+.category-chip:hover, .category-chip.active {
+    background-color: var(--pink-dark);
+    color: #ffffff;
+    border-color: var(--pink-dark);
+    box-shadow: 0 4px 12px rgba(255, 77, 109, 0.2);
 }

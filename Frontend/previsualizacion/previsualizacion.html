@@ -3,61 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinterest - Ver Pin</title>
+    <title>Fyntasy - Detalle de Idea</title>
     <link rel="stylesheet" href="previsualizacion_style.css">
 </head>
 <body>
 
-    <button class="back-btn" id="btnBack" title="Volver al inicio">
-        <i class="fa-solid fa-arrow-left"></i>
-    </button>
+    <header class="preview-navbar">
+        <div class="back-logo" onclick="location.href='../index.html'">
+            <i class="fa-solid fa-chevron-left"></i>
+            <i class="fa-solid fa-heart"></i>
+            <span>Fyntasy</span>
+        </div>
+    </header>
 
-    <main class="viewer-container">
-        <div class="viewer-card">
-            
-            <div class="image-section">
-                <img id="pinImage" src="" alt="Cargando imagen...">
+    <main class="preview-container">
+        <div class="pin-detailed-card">
+            <div class="pin-image-zone">
+                <img id="pin-image" src="" alt="Cargando recurso...">
             </div>
             
-            <div class="details-section">
-                <div class="action-header">
-                    <div class="utility-icons">
-                        <button class="icon"></button>
-                        <button class="icon"></button>
-                    </div>
-                    <button class="btn-save" id="btnSave">Guardar</button>
-                </div>
-                
-                <div class="content-body">
-                    <h1 id="pinTitle">Título del Pin</h1>
-                    <p class="pin-description">
-                        Esta idea fue descubierta en Pinterest. Explora más contenido visual similar navegando en tu feed principal de ideas y tendencias.
-                    </p>
+            <div class="pin-details-zone">
+                <div class="details-inner">
+                    <span class="category-tag" id="pin-category-tag"><i class="fa-solid fa-sparkles"></i> Inspiración</span>
+                    <h1 id="pin-title">Cargando título...</h1>
+                    <p class="author-badge">Subido por: <span id="pin-author" style="font-weight: 700; color: var(--pink-dark);">@autor</span></p>
+                    <p id="pin-description">Cargando la descripción del pin...</p>
                     
-                    <div class="author-box">
-                        <div class="avatar">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <div class="author-details">
-                            <span class="author-name">Estudio Creativo</span>
-                            <span class="followers">45 mil seguidores</span>
-                        </div>
-                        <button class="btn-follow">Seguir</button>
+                    <div class="comments-container">
+                        <h4>Comentarios de la Comunidad</h4>
+                        <div class="comments-list" id="comments-list"></div>
+                        <div class="comment-box" id="comment-box-wrapper"></div>
                     </div>
                 </div>
-
-                <div class="comments-section">
-                    <h3>Comentarios</h3>
-                    <p class="no-comments">Todavía no hay comentarios. ¡Sé el primero en compartir tu opinión!</p>
-                    <div class="comment-input-area">
-                        <div class="small-avatar"></div>
-                        <input type="text" placeholder="Añadir un comentario...">
-                    </div>
-                </div>
-
             </div>
         </div>
     </main>
+
     <script src="previsualizacion.js"></script>
 </body>
 </html>

@@ -1,71 +1,90 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const pinImage = document.getElementById('pinImage');
-    const pinTitle = document.getElementById('pinTitle');
-    const btnBack = document.getElementById('btnBack');
-    const btnSave = document.getElementById('btnSave');
+const urlParams = new URLSearchParams(window.location.search);
+const pinId = urlParams.get('id');
+const API_BASE = "http://127.0.0.1:8000/api/v1/pins";
+const usuarioAutenticado = localStorage.getItem("usuario_autenticado") === "true";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const imageUrl = urlParams.get('img');
-    const titleText = urlParams.get('title');
+document.addEventListener("DOMContentLoaded", () => {
+    if (!pinId) { window.location.href = "../index.html"; return; }
+    cargarDetalles();
+    cargarComentarios();
+    inicializarCajaComentarios();
+});
 
-    if (imageUrl && titleText) {
-        pinImage.src = decodeURIComponent(imageUrl);
-        pinImage.alt = decodeURIComponent(titleText);
-        pinTitle.textContent = decodeURIComponent(titleText);
+async function cargarDetalles() {
+    try {
+        const res = await fetch(`${API_BASE}/${pinId}`);
+        if (!res.ok) throw new Error();
+        const pin = await res.json();
+
+        // 1. Mostrar Categoría dinámica
+        const badge = document.getElementById("pin-category-tag");
+        if(badge) badge.innerHTML = `<i class="fa-solid fa-sparkles"></i> ${pin.categoria.toUpperCase()}`;
+
+        document.getElementById("pin-title").textContent = pin.titulo;
+        // 2. Mostrar Autor exacto
+        document.getElementById("pin-author").textContent = `@${pin.username_autor || 'Fyntasy_Girl'}`;
+        document.getElementById("pin-description").textContent = pin.descripcion || "Sin descripción.";
+        document.getElementById("pin-image").src = pin.source.startsWith("http") ? pin.source : `http://127.0.0.1:8000/${pin.source}`;
+    } catch (e) { window.location.href = "../index.html"; }
+}
+
+async function cargarComentarios() {
+    const lista = document.getElementById("comments-list");
+    if (!lista) return;
+    lista.innerHTML = "";
+    try {
+        const res = await fetch(`${API_BASE}/${pinId}/comments`);
+        const comentarios = await res.json();
+
+        if (comentarios.length === 0) {
+            lista.innerHTML = `<p style="color: var(--text-gray); font-size: 0.85rem; text-align: center;">Sé el primero en dejar un comentario.</p>`;
+            return;
+        }
+
+        comentarios.forEach(c => {
+            const item = document.createElement("div");
+            item.className = "comment-item";
+            item.innerHTML = `<strong>@${c.username_autor}</strong><p>${c.texto}</p>`;
+            lista.appendChild(item);
+        });
+        lista.scrollTop = lista.scrollHeight;
+    } catch (e) { console.error(e); }
+}
+
+function inicializarCajaComentarios() {
+    const contenedor = document.getElementById("comment-box-wrapper");
+    if (!contenedor) return;
+    if (usuarioAutenticado) {
+        contenedor.innerHTML = `
+            <form class="comment-form" id="comment-form">
+                <input type="text" id="comment-text" required placeholder="Añade un comentario tierno...">
+                <button type="submit" class="btn-comment-submit">Enviar</button>
+            </form>
+        `;
+        document.getElementById("comment-form").addEventListener("submit", publicarComentario);
     } else {
-        pinTitle.textContent = "Idea del Laboratorio de Sistemas";
-        pinImage.src = "https://images.unsplash.com/photo-1557683316-973673baf926?w=500"; 
+        contenedor.innerHTML = `<p style="font-size: 0.85rem; color: var(--pink-dark); text-align: center;">Debes iniciar sesión para comentar.</p>`;
     }
+}
 
-    if (btnBack) {
-        btnBack.addEventListener('click', () => {
-            window.location.href = '../index.html';
-        });
-    }
+async function publicarComentario(e) {
+    e.preventDefault();
+    const input = document.getElementById("comment-text");
+    const texto = input.value.trim();
 
-    if (btnSave) {
-        btnSave.addEventListener('click', () => {
-            const usuarioSesion = localStorage.getItem('usuario') || "Invitado";
-            alert(`¡Guardado exitoso! Hola ${usuarioSesion}, has añadido "${pinTitle.textContent}" a tu tablero corporativo.`);
-        });
-    }
-});
+    const formData = new FormData();
+    formData.append("texto", texto);
+    formData.append("usuario_id", localStorage.getItem("usuario_id") || "1");
+    formData.append("username_autor", localStorage.getItem("username") || "Fyntasy_Girl");
 
-const API_URL = "http://127.0.0.1:8000/pins";
-
-document.addEventListener('DOMContentLoaded', () => {
-    // ... tu código existente para cargar la imagen en la vista ...
-    const urlParams = new URLSearchParams(window.location.search);
-    const pinId = urlParams.get('id'); // ID del pin que pasamos en el script.js
-    const usuarioId = localStorage.getItem('usuario_id'); 
-
-    const btnSave = document.getElementById('btnSave');
-
-    // Funcionalidad de GUARDAR PIN REAL
-    if (btnSave) {
-        btnSave.addEventListener('click', async () => {
-            if (!usuarioId) {
-                alert("Debes iniciar sesión para guardar pines");
-                return;
-            }
-
-            try {
-                // Asumimos un tablero_id por defecto (ej. 1) para simplificar
-                const response = await fetch(`${API_URL}/${pinId}/guardar?tablero_id=1&usuario_id=${usuarioId}`, {
-                    method: 'POST'
-                });
-                
-                if (response.ok) {
-                    btnSave.textContent = "Guardado";
-                    btnSave.style.backgroundColor = "black";
-                    alert("¡Pin guardado en tu tablero exitosamente!");
-                }
-            } catch (error) {
-                console.error("Error al guardar:", error);
-            }
-        });
-    }
-
-    // Extra: Si quieres listar los comentarios reales, puedes llamar al endpoint
-    // fetch(`${API_URL}/${pinId}/comentarios`).then(...)
-});
+    try {
+        const res = await fetch(`${API_BASE}/${pinId}/comments`, { method: "POST", body: formData });
+        const data = await res.json();
+        if (res.ok) {
+            input.value = "";
+            cargarComentarios();
+        } else {
+            alert(`Filtro: ${data.detail}`);
+        }
+    } catch (err) { console.error(err); }
+}

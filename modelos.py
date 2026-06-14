@@ -1,44 +1,33 @@
-from pydantic import BaseModel, EmailStr, Field
-from sqlmodel import SQLModel, Field as SQLField
+from sqlmodel import SQLModel, Field
 from typing import Optional
 
 class Usuario(SQLModel, table=True):
-    id: Optional[int] = SQLField(default=None, primary_key=True)
-    email: str = SQLField(unique=True, index=True) 
-    password: Optional[str] = SQLField(default=None, nullable=True)
-    google_id: Optional[str] = None
-    # Nuevos campos para el Perfil
-    nombre: Optional[str] = None
-    biografia: Optional[str] = None
-    avatar_url: Optional[str] = None
-
-class UsuarioCreate(BaseModel):
-    email: EmailStr
-    password: str = Field(..., min_length=8)
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(unique=True, index=True)
+    email: str = Field(unique=True)
+    password: str
+    bio: str = Field(default="Diseñando mi tablero de sueños en Fyntasy ✨") # Nueva bio para el perfil
 
 class Pin(SQLModel, table=True):
-    id: Optional[int] = SQLField(default=None, primary_key=True)
-    source: str # Aquí guardaremos la URL/Ruta de la imagen subida
+    id: Optional[int] = Field(default=None, primary_key=True)
     titulo: str
-    es_publico: bool = SQLField(default=True)  
-    reportado: bool = SQLField(default=False)
-    usuario_id: int = SQLField(foreign_key="usuario.id", default=1) # Quién lo subió
+    descripcion: str
+    source: str
+    categoria: str = Field(default="chill")
+    usuario_id: Optional[int] = Field(default=None, foreign_key="usuario.id")
+    username_autor: str = Field(default="Fyntasy_Girl")
+    es_publico: bool = Field(default=True)
+    reportado: bool = Field(default=False)
 
 class Comentario(SQLModel, table=True):
-    id: Optional[int] = SQLField(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     texto: str
-    pin_id: int = SQLField(foreign_key="pin.id")
-    usuario_id: Optional[int] = SQLField(foreign_key="usuario.id", default=None)
+    pin_id: int = Field(foreign_key="pin.id")
+    usuario_id: int = Field(foreign_key="usuario.id")
+    username_autor: str
 
-# NUEVO: Carpetas / Tableros
-class Tablero(SQLModel, table=True):
-    id: Optional[int] = SQLField(default=None, primary_key=True)
-    nombre: str
-    usuario_id: int = SQLField(foreign_key="usuario.id")
-
-# NUEVO: Guardar Pines
-class PinGuardado(SQLModel, table=True):
-    id: Optional[int] = SQLField(default=None, primary_key=True)
-    pin_id: int = SQLField(foreign_key="pin.id")
-    tablero_id: int = SQLField(foreign_key="tablero.id")
-    usuario_id: int = SQLField(foreign_key="usuario.id")
+# NUEVA TABLA PARA MODERACIÓN COMUNITARIA
+class Reporte(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    pin_id: int = Field(foreign_key="pin.id")
+    usuario_id: int = Field(foreign_key="usuario.id")

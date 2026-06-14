@@ -3,80 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinterest - Mi Perfil</title>
+    <title>Fyntasy - Mi Perfil</title>
     <link rel="stylesheet" href="profile_style.css">
 </head>
 <body>
 
-    <header class="pinterest-navbar">
-        <div class="nav-left">
-            <a href="../index.html" class="nav-logo">
-                <i class="fa-brands fa-pinterest"></i>
-            </a>
-            <a href="../index.html" class="nav-btn">Inicio</a>
+    <header class="navbar">
+        <div class="logo" onclick="location.href='../index.html'" style="cursor: pointer;">
+            <i class="fa-solid fa-heart"></i>
+            <span>Fyntasy</span>
         </div>
-        <div class="nav-right">
-            <a href="../login/login.html" class="nav-auth-btn btn-login">Iniciar sesión</a>
-            <a href="../register/register.html" class="nav-auth-btn btn-register">Registrarse</a>
-            <a href="profile.html" class="nav-profile-icon active" title="Mi Perfil">
-                <i class="fa-solid fa-user"></i>
-            </a>
-        </div>
+        <button class="btn-back" onclick="location.href='../index.html'"><i class="fa-solid fa-house"></i> Volver</button>
     </header>
 
     <main class="profile-container">
-        
-        <section class="profile-header">
-            <div class="profile-avatar-container">
-                <div class="profile-avatar" id="userAvatar">E</div>
+        <section class="user-profile-header">
+            <div class="avatar-container">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
             </div>
+            <h2 id="profile-username">@Username</h2>
+            <p class="profile-bio" id="profile-bio">Diseñando mi tablero de sueños en Fyntasy</p>
             
-            <h1 class="profile-name" id="profileName">Elianna</h1>
-            <p class="profile-username" id="profileUsername">@elianna</p>
-            <p class="profile-bio" id="profileBio">Pruebita</p>
-            
-            <div class="profile-actions">
-                <button class="btn-edit" id="btnOpenEdit">Editar perfil</button>
-                <button class="btn-share-profile"><i class="fa-solid fa-share-nodes"></i></button>
-            </div>
+            <button class="btn-edit-profile" onclick="alert('La edición de perfil estará disponible en Fyntasy V2.0')">Editar Perfil</button>
         </section>
 
-        <hr class="profile-divider">
-
         <div class="profile-tabs">
-            <button class="tab-btn active">Creados</button>
-            <button class="tab-btn">Guardados</button>
+            <button class="tab-btn active">Mis Pines</button>
+            <button class="tab-btn" onclick="alert('Próximamente podrás ver tus tableros guardados.')">Guardados <i class="fa-solid fa-lock" style="font-size:0.7rem;"></i></button>
         </div>
 
-        <section class="user-publications">
-            <div class="publications-grid" id="userGrid">
-                </div>
+        <section class="user-gallery">
+            <div class="pin-grid" id="user-pin-grid"></div>
         </section>
     </main>
 
-    <div id="editModal" class="modal-overlay">
-        <div class="edit-card">
-            <h2>Editar tu perfil</h2>
-            <p class="edit-subtitle">Mantén tu información personal actualizada públicamente.</p>
-            
-            <form id="editProfileForm">
-                <div class="form-group">
-                    <label for="inputName">Nombre público</label>
-                    <input type="text" id="inputName" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="inputBio">Acerca de ti (Biografía)</label>
-                    <textarea id="inputBio" rows="3" placeholder="Cuéntale a la comunidad sobre ti..."></textarea>
-                </div>
-
-                <div class="modal-form-actions">
-                    <button type="button" class="btn-cancel" id="btnCancelEdit">Cancelar</button>
-                    <button type="submit" class="btn-submit-save">Guardar cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
     <script src="profile.js"></script>
 </body>
 </html>

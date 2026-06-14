@@ -3,67 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinterest - Login</title>
+    <title>Fyntasy - Iniciar Sesión</title>
     <link rel="stylesheet" href="login_style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-
-    <main class="login-container">
-        <div class="login-card">
-            <div class="logo-area">
-                <i class="fa-brands fa-pinterest logo-icon"></i>
-            </div>
-            
-            <h2>Bienvenido de nuevo a Pinterest</h2>
-
-            <form id="loginForm" class="login-form">
-                <div class="input-group">
-                    <label for="loginUser">Correo electrónico o Usuario</label>
-                    <input type="text" id="loginUser" placeholder="Correo o usuario de Active Directory" required>
-                    <span class="error-message" id="emailError"></span>
-                </div>
-
-                <div class="input-group">
-                    <label for="loginPassword">Contraseña</label>
-                    <input type="password" id="loginPassword" placeholder="Contraseña" required>
-                    <span class="error-message" id="passwordError"></span>
-                </div>
-
-                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-
-                <button type="submit" class="btn-submit">Iniciar sesión</button>
-            </form>
-
-            <div class="divider" style="text-align: center; margin: 20px 0; color: #767676; font-size: 14px; position: relative; width: 100%;">
-                <span style="background: #ffffff; padding: 0 10px; position: relative; z-index: 1;">O</span>
-                <div style="position: absolute; top: 50%; left: 0; right: 0; border-top: 1px solid #e1e1e1; z-index: 0;"></div>
-            </div>
-
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-size="large"
-                 data-theme="outline"
-                 data-text="signin_with"
-                 data-shape="pill"
-                 data-logo_alignment="left"
-                 data-width="270"
-                 style="display: flex; justify-content: center; width: 100%; margin-bottom: 10px;">
-            </div>
-
-            <footer class="login-footer">
-                <p>¿Aún no estás en Pinterest? <a href="../register/register.html" id="toRegister">Regístrate</a></p>
-            </footer>
+    <div class="login-container">
+        <div class="brand-header" onclick="location.href='../index.html'" style="cursor: pointer;">
+            <i class="fa-solid fa-heart login-logo-icon"></i>
+            <h2>Fyntasy</h2>
         </div>
-    </main>
+        <h3>Te damos la bienvenida</h3>
+        <p class="subtitle">Encuentra nuevas ideas coquette y girly hoy</p>
+        
+        <form id="login-form">
+            <div class="input-group">
+                <label for="log-email">Correo Electrónico</label>
+                <input type="email" id="log-email" required placeholder="ejemplo@correo.com">
+            </div>
+            <div class="input-group">
+                <label for="log-password">Contraseña</label>
+                <input type="password" id="log-password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-login">Iniciar Sesión</button>
+        </form>
 
-    <div id="g_id_onload"
-         data-client_id="62688628748-80so2m75d6mtoeortm12mt1pf4stdup6.apps.googleusercontent.com"
-         data-callback="handleGoogleLoginResponse"
-         data-auto_prompt="false">
+        <div style="margin: 1.5rem 0; color: var(--text-muted); font-size: 0.85rem;">o también puedes</div>
+
+        <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+            <div id="g_id_onload"
+                 data-client_id="TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                 data-callback="handleGoogleCredentialResponse"
+                 data-ux_mode="popup">
+            </div>
+            <div class="g_id_signin" data-type="standard"></div>
+        </div>
+        
+        <div class="login-footer">
+            <p>¿Aún no eres parte? <a href="../register/register.html">Regístrate en Fyntasy</a></p>
+        </div>
     </div>
-
     <script src="login.js"></script>
 </body>
 </html>
