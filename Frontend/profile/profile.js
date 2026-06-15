@@ -1,5 +1,6 @@
 const usuarioId = localStorage.getItem("usuario_id");
 const usernameLogueado = localStorage.getItem("username");
+const usuarioAutenticado = localStorage.getItem("usuario_autenticado") === "true";
 
 $(async function() {
 
@@ -41,7 +42,9 @@ async function cargarMisPines() {
                 <img src="${rutaImagen}" alt="${pin.titulo}" style="cursor: pointer;" onclick="location.href='../previsualizacion/previsualizacion.html?id=${pin.id}'">
                 <div class="pin-info">
                     <h4>${pin.titulo}</h4>
-                    <p>${pin.descripcion || 'Sin descripción.'}</p>
+                    <p style="font-size: 0.78rem; color: var(--pink-dark); text-transform: uppercase; font-weight: 700; margin-top: 5px;">
+                        <i class="fa-solid fa-sparkles"></i> ${pin.categoria}
+                    </p>
                 </div>
             `);
             
