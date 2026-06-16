@@ -33,7 +33,7 @@ def despachar_correo_real(email_destino: str, username: str, tipo_evento: str = 
     <html>
         <body style="background-color: #fff5f6; font-family: 'Segoe UI', sans-serif; padding: 20px;">
             <div style="max-width: 500px; margin: 0 auto; background-color: #ffffff; padding: 30px; border-radius: 20px; border: 1px solid #ffe3e8; text-align: center;">
-                <h2 style="color: #ff4d6d; font-family: Georgia, serif;">✨ Fyntasy ✨</h2>
+                <h2 style="color: #ff4d6d; font-family: Georgia, serif;">Fyntasy</h2>
                 <p style="color: #3a2226; font-size: 16px;">¡Hola, <strong>@{username}</strong>!</p>
                 <p style="color: #8a7377; font-size: 14px; line-height: 1.5;">
                     Te notificamos que se ha procesado con éxito un evento de <strong>{tipo_evento}</strong> en tu perfil.
