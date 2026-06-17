@@ -10,7 +10,7 @@ from app.routers import auth, pins, users
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_all_table()
-    print("✨ Base de datos e infraestructura de Fyntasy inicializada correctamente.")
+    print(" Base de datos e infraestructura de Fyntasy inicializada correctamente.")
     yield
 
 app = FastAPI(title="Fyntasy Core API", version="1.0.0", lifespan=lifespan)
