@@ -3,7 +3,6 @@ from sqlmodel import Session, select
 from db import get_session
 from modelos import Usuario
 
-# Cambiamos el nombre a 'router' para que combine perfectamente con main.py
 router = APIRouter(
     prefix="/users",
     tags=["Usuarios"]

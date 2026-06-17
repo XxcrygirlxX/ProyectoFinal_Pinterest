@@ -4,17 +4,18 @@ from email.mime.multipart import MIMEMultipart
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 from pydantic import BaseModel
+import urllib.request
+import json
 
 from db import get_session
 from modelos import Usuario
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
-# Configuración SMTP Real para Gmail
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-CORREO_REMITENTE = "elianna.suasnavas@gmail.com"  # <-- Tu Gmail emisor real
-CONTRASENA_APLICACION = "ndam jufr mrxo agdg"       # <-- Tu clave de aplicación de 16 letras
+CORREO_REMITENTE = "elianna.suasnavas@gmail.com" 
+CONTRASENA_APLICACION = "ndam jufr mrxo agdg"      
 
 class LoginRequest(BaseModel):
     email: str
@@ -77,13 +78,28 @@ def login_normal(datos: LoginRequest, session: Session = Depends(get_session)):
 
 @router.post("/google")
 def login_google(data: GoogleTokenRequest, session: Session = Depends(get_session)):
-    email_google = "tu_cuenta_personal@gmail.com"  # <-- Tu correo real de pruebas
-    username_google = "google_girl"
+    try:
+        url_verificacion = f"https://oauth2.googleapis.com/tokeninfo?id_token={data.token}"
+        solicitud = urllib.request.Request(url_verificacion)
+        
+        with urllib.request.urlopen(solicitud) as respuesta:
+            datos_token = json.loads(respuesta.read().decode("utf-8"))
+        
+        if "error_description" in datos_token:
+            raise HTTPException(status_code=400, detail="El token de Google proporcionado no es válido o ha expirado.")
+            
+        email_google = datos_token["email"]
+        username_google = datos_token.get("given_name", "Google_User").replace(" ", "_").lower()
+        
+    except Exception as error:
+        raise HTTPException(status_code=401, detail=f"Fallo en la verificación de identidad con Google: {str(error)}")
+
     usuario = session.exec(select(Usuario).where(Usuario.email == email_google)).first()
     if not usuario:
         usuario = Usuario(username=username_google, email=email_google, password="oauth_google_secure_123")
         session.add(usuario)
         session.commit()
         session.refresh(usuario)
+        
     despachar_correo_real(usuario.email, usuario.username, "Inicio de Sesión vía Google Identity")
     return {"usuario_id": usuario.id, "user": {"username": usuario.username, "email": usuario.email}}

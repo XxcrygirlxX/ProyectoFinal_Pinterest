@@ -1,17 +1,14 @@
-const IP_SERVIDOR = "127.0.0.1";
 const urlParams = new URLSearchParams(window.location.search);
 const pinId = urlParams.get('id');
-const API_BASE = `http://${IP_SERVIDOR}:8000/api/v1/pins`;
+const API_BASE = "http://127.0.0.1:8000/api/v1/pins";
 const usuarioAutenticado = localStorage.getItem("usuario_autenticado") === "true";
-
-let urlDeLaImagenAws = "";
 
 document.addEventListener("DOMContentLoaded", () => {
     if (!pinId) { window.location.href = "../index.html"; return; }
     cargarDetalles();
     cargarComentarios();
-    inicializarCajaComentarios();
-    configurarControlesSociales();
+    initializeCajaComentarios();
+    configurarBotonReporte();
 });
 
 async function cargarDetalles() {
@@ -20,18 +17,17 @@ async function cargarDetalles() {
         if (!res.ok) throw new Error();
         const pin = await res.json();
 
-        urlDeLaImagenAws = pin.source;
-
         const badge = document.getElementById("pin-category-tag");
-        if(badge) badge.innerHTML = `<i class="fa-solid fa-sparkles"></i> ${pin.categoria.toUpperCase()}`;
+        if(badge) badge.innerHTML = `<i class="fa-solid fa-server" aria-hidden="true"></i> ${pin.categoria.toUpperCase()}`;
 
         document.getElementById("pin-title").textContent = pin.titulo;
-        document.getElementById("pin-author").textContent = `@${pin.username_autor || 'Fyntasy_Girl'}`;
+        document.getElementById("pin-author").textContent = `@${pin.username_autor || 'System_User'}`;
         document.getElementById("pin-description").textContent = pin.descripcion || "Sin descripción.";
-        document.getElementById("pin-image").src = pin.source;
-    } catch (e) { 
-        window.location.href = "../index.html"; 
-    }
+        
+        const imgElement = document.getElementById("pin-image");
+        imgElement.src = pin.source;
+        imgElement.alt = `Fotografía titulada: ${pin.titulo}`;
+    } catch (e) { window.location.href = "../index.html"; }
 }
 
 async function cargarComentarios() {
@@ -43,7 +39,7 @@ async function cargarComentarios() {
         const comentarios = await res.json();
 
         if (comentarios.length === 0) {
-            lista.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem;">Sé el primero en dejar un comentario.</p>`;
+            lista.innerHTML = `<p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1rem;">No se registran comentarios aún.</p>`;
             return;
         }
 
@@ -54,24 +50,22 @@ async function cargarComentarios() {
             lista.appendChild(item);
         });
         lista.scrollTop = lista.scrollHeight;
-    } catch (e) { 
-        console.error(e); 
-    }
+    } catch (e) { console.error(e); }
 }
 
-function inicializarCajaComentarios() {
+function initializeCajaComentarios() {
     const contenedor = document.getElementById("comment-box-wrapper");
     if (!contenedor) return;
     if (usuarioAutenticado) {
         contenedor.innerHTML = `
             <form class="comment-form" id="comment-form">
-                <input type="text" id="comment-text" required placeholder="Añade un comentario tierno...">
-                <button type="submit" class="btn-comment-submit">Enviar</button>
+                <input type="text" id="comment-text" required placeholder="Escribir una aportación..." aria-label="Campo para redactar un comentario">
+                <button type="submit" class="btn-comment-submit" aria-label="Enviar datos al endpoint de comentarios">Enviar</button>
             </form>
         `;
         document.getElementById("comment-form").addEventListener("submit", publicarComentario);
     } else {
-        contenedor.innerHTML = `<p style="font-size: 0.85rem; color: var(--pink-dark); text-align: center; padding: 0.5rem;">Debes iniciar sesión para comentar.</p>`;
+        contenedor.innerHTML = `<p style="font-size: 0.85rem; color: var(--pink-dark); text-align: center; padding: 0.5rem;">Autenticación requerida para habilitar comentarios.</p>`;
     }
 }
 
@@ -83,7 +77,7 @@ async function publicarComentario(e) {
     const formData = new FormData();
     formData.append("texto", texto);
     formData.append("usuario_id", localStorage.getItem("usuario_id") || "1");
-    formData.append("username_autor", localStorage.getItem("username") || "Fyntasy_Girl");
+    formData.append("username_autor", localStorage.getItem("username") || "Fyntasy_User");
 
     try {
         const res = await fetch(`${API_BASE}/${pinId}/comments`, { method: "POST", body: formData });
@@ -92,45 +86,36 @@ async function publicarComentario(e) {
             input.value = "";
             cargarComentarios();
         } else {
-            alert(`Filtro: ${data.detail}`);
+            alert(`Excepción del validador: ${data.detail}`);
         }
     } catch (err) { console.error(err); }
 }
 
-function configurarControlesSociales() {
+function configurarBotonReporte() {
     const btnReportar = document.getElementById("btn-reportar-detalle");
-    const btnCopiar = document.getElementById("btn-copiar-enlace");
+    if (!btnReportar) return;
 
-    if (btnCopiar) {
-        btnCopiar.addEventListener("click", () => {
-            if (!urlDeLaImagenAws) return;
-            navigator.clipboard.writeText(urlDeLaImagenAws);
-            alert("¡Link directo de AWS S3 copiado al portapapeles!");
-        });
-    }
+    btnReportar.addEventListener("click", async () => {
+        const usuarioId = localStorage.getItem("usuario_id");
+        if (!usuarioId) {
+            alert("Autenticación requerida para realizar reportes.");
+            return;
+        }
+        if (!confirm("¿Confirmar registro de reporte técnico sobre este pin?")) return;
 
-    if (btnReportar) {
-        btnReportar.addEventListener("click", async () => {
-            const usuarioId = localStorage.getItem("usuario_id");
-            if (!usuarioId) { alert("Inicia sesión para reportar."); return; }
-            if (!confirm("¿Reportar esta idea? Al acumular 3 reportes se borrará de forma definitiva.")) return;
+        const formData = new FormData();
+        formData.append("usuario_id", usuarioId);
 
-            const formData = new FormData();
-            formData.append("usuario_id", usuarioId);
-
-            try {
-                const res = await fetch(`${API_BASE}/${pinId}/report`, { method: "POST", body: formData });
-                const data = await res.json();
-                alert(data.message || data.detail);
-                
-                let reportados = JSON.parse(localStorage.getItem("fyntasy_mis_reportes") || "[]");
-                if(!reportados.includes(Number(pinId))) {
-                    reportados.push(Number(pinId));
-                    localStorage.setItem("fyntasy_mis_reportes", JSON.stringify(reportados));
-                }
-                
-                window.location.href = "../index.html"; 
-            } catch (e) { console.error(e); }
-        });
-    }
+        try {
+            const response = await fetch(`${API_BASE}/${pinId}/report`, { method: "POST", body: formData });
+            const data = await response.json();
+            alert(data.message);
+            if (response.ok && data.message.includes("retirado")) {
+                window.location.href = "../index.html";
+            }
+        } catch (e) {
+            console.error("Error al procesar el reporte:", e);
+            alert("Fallo de red en el servicio de reportes.");
+        }
+    });
 }

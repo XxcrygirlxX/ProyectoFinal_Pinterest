@@ -3,29 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fyntasy - Inspiración</title>
+    <meta name="description" content="Fyntasy - Plataforma de catálogo visual y compartición de ideas multimedia con moderación automática por inteligencia artificial y almacenamiento estructurado en la nube.">
+    <title>Fyntasy - Inspiración Visual</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="navbar">
-        <div class="logo" id="btn-logo">
-            <i class="fa-solid fa-heart icon-logo"></i>
+        <div class="logo" id="btn-logo" role="button" aria-label="Ir al inicio">
+            <i class="fa-solid fa-heart icon-logo" aria-hidden="true"></i>
             <span>Fyntasy</span>
         </div>
         
         <div class="search-bar">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="search-input" placeholder="Buscar entrenamiento...">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" id="search-input" placeholder="Buscar pins..." aria-label="Buscar publicaciones en la plataforma">
         </div>
         
-        <nav class="nav-menu">
-            <button class="btn-nav active" id="btn-inicio">Inicio</button>
+        <nav class="nav-menu" aria-label="Navegación principal">
+            <button class="btn-nav active" id="btn-inicio" aria-label="Ver todas las publicaciones">Inicio</button>
             <div id="auth-actions" class="auth-flex"></div>
         </nav>
     </header>
 
-    <div class="categories-bar">
+    <div class="categories-bar" role="group" aria-label="Filtro por categorías de contenido">
         <button class="category-chip active" data-category="todas">Mostrar Todo</button>
         <button class="category-chip" data-category="paisajes">Paisajes</button>
         <button class="category-chip" data-category="entrenamiento">Entrenamiento</button>
@@ -33,28 +39,28 @@
     </div>
 
     <main class="feed-container">
-        <div class="pin-grid" id="pin-grid">
+        <div class="pin-grid" id="pin-grid" style="min-height: 70vh;">
             </div>
     </main>
 
-    <div class="modal" id="upload-modal">
+    <div class="modal" id="upload-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
         <div class="modal-content">
-            <span class="close-btn" id="close-modal-btn">&times;</span>
-            <h3>Compartir en Fyntasy</h3>
+            <span class="close-btn" id="close-modal-btn" role="button" aria-label="Cerrar ventana de carga">&times;</span>
+            <h3 id="modal-title">Subir Pin</h3>
             <form id="upload-form">
                 <div class="form-group">
-                    <label for="pin-title">Título de tu Pin</label>
-                    <input type="text" id="pin-title" required placeholder="Ej. Mi rincón favorito de lectura">
+                    <label for="pin-title">Título</label>
+                    <input type="text" id="pin-title" required placeholder="Ingrese un título.">
                 </div>
                 
                 <div class="form-group">
-                    <label for="pin-description">Añade una descripción</label>
-                    <textarea id="pin-description" required placeholder="Cuéntale a la comunidad de qué trata tu idea..."></textarea>
+                    <label for="pin-description">Descripción</label>
+                    <textarea id="pin-description" required placeholder="Ingrese una descripción."></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="pin-category">Categoría del Pin</label>
-                    <select id="pin-category" required style="background-color: var(--pink-light); border: 1px solid transparent; padding: 0.8rem 1rem; border-radius: 14px; color: var(--text-dark); font-size: 0.92rem; outline: none;">
+                    <label for="pin-category">Categoría de Destino</label>
+                    <select id="pin-category" required aria-label="Seleccionar subcarpeta de destino">
                         <option value="paisajes">Paisajes</option>
                         <option value="entrenamiento">Entrenamiento</option>
                         <option value="chill" selected>Chill</option>
@@ -62,19 +68,19 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="pin-file">Subir Imagen</label>
-                    <input type="file" id="pin-file" accept="image/*" required>
+                    <label for="pin-file">Archivo de Imagen</label>
+                    <input type="file" id="pin-file" accept="image/*" required aria-label="Seleccionar imagen">
                 </div>
                 
                 <div class="ethical-card">
-                    <p><i class="fa-solid fa-hand-holding-heart"></i> <strong>Moderación Activa por IA:</strong> Al subir tu foto, nuestro modelo neuronal h5 y el filtro de palabras analizarán el contenido para garantizar un espacio ético libre de cosas obscenas.</p>
+                    <p><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <strong>Filtro Inteligente Activo:</strong> Los metadatos de texto y la matriz de píxeles del archivo serán procesados de forma local por la red neuronal entrenada para la detección y bloqueo automático de recursos explícitos o no autorizados.</p>
                 </div>
                 
-                <button type="submit" class="btn-submit">Publicar Idea</button>
+                <button type="submit" class="btn-submit">Publicar Pin</button>
             </form>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

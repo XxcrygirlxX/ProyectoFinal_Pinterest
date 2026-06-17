@@ -1,8 +1,5 @@
-const IP_SERVIDOR = "127.0.0.1";
-const API_URL = `http://${IP_SERVIDOR}:8000/api/v1/pins`;
-
+const API_URL = "http://127.0.0.1:8000/api/v1/pins";
 let usuarioAutenticado = localStorage.getItem("usuario_autenticado") === "true";
-const usuarioIdLogueado = localStorage.getItem("usuario_id");
 let datosPines = []; 
 let categoriaActual = "todas";
 
@@ -20,23 +17,23 @@ function inicializarNavbar() {
 
     if (usuarioAutenticado) {
         contenedorAcciones.innerHTML = `
-            <button class="btn-nav" id="btn-abrir-crear"><i class="fa-solid fa-plus"></i> Crear</button>
-            <button class="btn-auth-outline" onclick="location.href='profile/profile.html'"><i class="fa-solid fa-user"></i> Mi Perfil</button>
-            <button class="btn-nav" id="btn-logout" style="background-color: #fff0f3; color: #ff4d6d; border: 1px solid #ffe3e8; margin-left: 8px;">
-                <i class="fa-solid fa-right-from-bracket"></i> Salir
+            <button class="btn-nav" id="btn-abrir-crear" aria-label="Subir nueva publicación"><i class="fa-solid fa-plus" aria-hidden="true"></i> Crear</button>
+            <button class="btn-auth-outline" onclick="location.href='profile/profile.html'" aria-label="Ver perfil del usuario"><i class="fa-solid fa-user" aria-hidden="true"></i> Mi Perfil</button>
+            <button class="btn-nav" id="btn-logout" aria-label="Cerrar sesión en el sistema" style="background-color: #fff0f3; color: #ff4d6d; border: 1px solid #ffe3e8; margin-left: 8px;">
+                <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Salir
             </button>
         `;
         document.getElementById("btn-abrir-crear").addEventListener("click", abrirModalCrear);
         document.getElementById("btn-logout").addEventListener("click", () => {
             localStorage.clear();
             usuarioAutenticado = false;
-            alert("Sesión cerrada correctamente.");
+            alert("Sesión finalizada correctamente.");
             location.reload();
         });
     } else {
         contenedorAcciones.innerHTML = `
-            <button class="btn-auth-outline" onclick="location.href='login/login.html'">Iniciar Sesión</button>
-            <button class="btn-nav" onclick="location.href='register/register.html'">Registrarse</button>
+            <button class="btn-auth-outline" onclick="location.href='login/login.html'" aria-label="Iniciar sesión">Iniciar Sesión</button>
+            <button class="btn-nav" onclick="location.href='register/register.html'" aria-label="Registrar nueva cuenta">Registrarse</button>
         `;
     }
 }
@@ -44,7 +41,7 @@ function inicializarNavbar() {
 async function cargarFeedPines() {
     const grid = document.getElementById("pin-grid");
     if (!grid) return;
-    grid.innerHTML = `<p style="color: var(--text-gray); text-align: center; width:100%;">Cargando inspiración en Fyntasy...</p>`;
+    grid.innerHTML = `<p style="color: var(--text-muted); text-align: center; width:100%;">Consultando índices de la base de datos...</p>`;
     
     let urlDestino = API_URL;
     if (categoriaActual !== "todas") urlDestino += `?categoria=${categoriaActual}`;
@@ -54,7 +51,7 @@ async function cargarFeedPines() {
         datosPines = await res.json();
         renderizarPines(datosPines);
     } catch (error) {
-        grid.innerHTML = `<p style="color: var(--pink-dark); text-align: center;">Error de red al conectar con el servidor.</p>`;
+        grid.innerHTML = `<p style="color: var(--pink-dark); text-align: center;">Error de conexión con la API de almacenamiento.</p>`;
     }
 }
 
@@ -63,43 +60,39 @@ function renderizarPines(pines) {
     if (!grid) return;
     grid.innerHTML = "";
 
-    const misReportados = JSON.parse(localStorage.getItem("fyntasy_mis_reportes") || "[]");
-
     if (pines.length === 0) {
-        grid.innerHTML = `<p style="color: var(--text-gray); text-align: center; width: 100%;">Aún no hay pines publicados.</p>`;
+        grid.innerHTML = `<p style="color: var(--text-muted); text-align: center; width: 100%;">No se encontraron registros indexados en esta categoría.</p>`;
         return;
     }
+
+    const fragmento = document.createDocumentFragment();
 
     pines.forEach(pin => {
         if (!pin.reportado && pin.es_publico) {
             const card = document.createElement("div");
             card.className = "pin-card";
-            
-            if (misReportados.includes(pin.id)) {
-                card.style.filter = "blur(8px) grayscale(100%)";
-                card.style.opacity = "0.4";
-                card.style.pointerEvents = "none";
-            }
-
             const rutaImagen = pin.source;
+            
             const botonReporte = usuarioAutenticado 
-                ? `<button class="btn-report" onclick="ejecutarReporte(${pin.id})"><i class="fa-solid fa-flag"></i></button>`
-                : `<button class="btn-report" onclick="alert('Inicia sesión para reportar.')" style="opacity:0.3;"><i class="fa-solid fa-flag"></i></button>`;
+                ? `<button class="btn-report" onclick="ejecutarReporte(${pin.id})" aria-label="Reportar infracción en pin ${pin.titulo}"><i class="fa-solid fa-flag" aria-hidden="true"></i></button>`
+                : `<button class="btn-report" onclick="alert('Autenticación requerida para realizar reportes.')" style="opacity:0.3;" aria-label="Reporte bloqueado"><i class="fa-solid fa-flag" aria-hidden="true"></i></button>`;
 
             card.innerHTML = `
-                <img src="${rutaImagen}" style="cursor: pointer;" onclick="location.href='previsualizacion/previsualizacion.html?id=${pin.id}'">
+                <img src="${rutaImagen}" alt="Recurso multimedia: ${pin.titulo}" loading="lazy" decoding="async" style="cursor: pointer; width: 100%; display: block; height: auto;" onclick="location.href='previsualizacion/previsualizacion.html?id=${pin.id}'">
                 <div class="pin-info">
                     <h4 style="cursor: pointer;" onclick="location.href='previsualizacion/previsualizacion.html?id=${pin.id}'">${pin.titulo}</h4>
-                    <p>${pin.descripcion || 'Sin descripción.'}</p>
+                    <p>${pin.descripcion || 'Sin descripción disponible.'}</p>
                     <div class="pin-footer">
-                        <span style="font-size: 0.8rem; color: var(--pink-dark); font-weight:600;"><i class="fa-solid fa-heart"></i> Fyntasy • <small style="text-transform: capitalize;">${pin.categoria}</small></span>
+                        <span style="font-size: 0.8rem; color: var(--pink-dark); font-weight:600;"><i class="fa-solid fa-database" aria-hidden="true"></i> S3 Storage • <small style="text-transform: capitalize;">${pin.categoria}</small></span>
                         ${botonReporte}
                     </div>
                 </div>
             `;
-            grid.appendChild(card);
+            fragmento.appendChild(card);
         }
     });
+
+    grid.appendChild(fragmento);
 }
 
 function configurarFiltrosCategorias() {
@@ -118,7 +111,6 @@ function configurarEventos() {
     const volverInicio = () => {
         document.getElementById("search-input").value = "";
         categoriaActual = "todas";
-        inicializarNavbar();
         const chips = document.querySelectorAll(".category-chip");
         chips.forEach(c => c.classList.remove("active"));
         if(chips[0]) chips[0].classList.add("active");
@@ -140,12 +132,18 @@ function configurarEventos() {
 
 function abrirModalCrear() {
     const modal = document.getElementById("upload-modal");
-    if (modal) modal.style.display = "flex";
+    if (modal) {
+        modal.style.display = "flex";
+        modal.setAttribute("aria-hidden", "false");
+    }
 }
 
 function cerrarModalCrear() {
     const modal = document.getElementById("upload-modal");
-    if (modal) modal.style.display = "none";
+    if (modal) {
+        modal.style.display = "none";
+        modal.setAttribute("aria-hidden", "true");
+    }
     document.getElementById("upload-form").reset();
 }
 
@@ -158,7 +156,7 @@ async function procesarNuevoPin(e) {
     const archivoInput = document.getElementById("pin-file");
     const usuarioId = localStorage.getItem("usuario_id");
 
-    if (!usuarioId) { alert("Inicia sesión."); return; }
+    if (!usuarioId) { alert("Sesión inválida."); return; }
 
     const formData = new FormData();
     formData.append("titulo", titulo);
@@ -169,19 +167,19 @@ async function procesarNuevoPin(e) {
 
     const textoOriginal = btnSubmit.innerHTML;
     btnSubmit.disabled = true;
-    btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando recurso en AWS S3...`;
+    btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Procesando Red Neuronal y AWS S3...`;
 
     try {
-        const response = await fetch(`http://${IP_SERVIDOR}:8000/api/v1/pins/upload`, { method: "POST", body: formData });
+        const response = await fetch("http://127.0.0.1:8000/api/v1/pins/upload", { method: "POST", body: formData });
         const data = await response.json();
         if (response.ok) {
-            alert("¡Pin aprobado y subido con éxito a la nube AWS S3! ✨");
+            alert("Recurso verificado por la IA y cargado correctamente en AWS S3.");
             cerrarModalCrear();
             cargarFeedPines();
         } else {
-            alert(`Filtro Fyntasy: ${data.detail}`);
+            alert(`Error de validación interna: ${data.detail}`);
         }
-    } catch (error) { alert("Error al conectar con el servidor."); }
+    } catch (error) { alert("Fallo de red en el servicio de subida."); }
     finally {
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = textoOriginal;
@@ -190,22 +188,20 @@ async function procesarNuevoPin(e) {
 
 async function ejecutarReporte(id) {
     const usuarioId = localStorage.getItem("usuario_id");
-    if (!usuarioId) { alert("Inicia sesión para reportar."); return; }
-    if (!confirm("¿Deseas reportar esta idea? (A los 3 reportes se eliminará automáticamente).")) return;
+    if (!usuarioId) { alert("Autenticación requerida."); return; }
+    if (!confirm("¿Confirmar registro sobre este pin?")) return;
 
     const formData = new FormData();
     formData.append("usuario_id", usuarioId);
 
     try {
-        const response = await fetch(`http://${IP_SERVIDOR}:8000/api/v1/pins/${id}/report`, { method: "POST", body: formData });
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/pins/${id}/report`, { method: "POST", body: formData });
         const data = await response.json();
-        alert(data.message || data.detail);
-
-        let reportados = JSON.parse(localStorage.getItem("fyntasy_mis_reportes") || "[]");
-        if (!reportados.includes(id)) {
-            reportados.push(id);
-            localStorage.setItem("fyntasy_mis_reportes", JSON.stringify(reportados));
+        if (response.ok) { 
+            alert(data.message); 
+            cargarFeedPines(); 
+        } else {
+            alert(`Error del servidor: ${data.detail}`);
         }
-        cargarFeedPines(); 
     } catch (e) { console.error(e); }
 }

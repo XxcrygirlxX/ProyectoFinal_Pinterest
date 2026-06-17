@@ -3,26 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fyntasy - Crear Cuenta</title>
+    <meta name="description" content="Formulario de alta e indexación de nuevas cuentas de usuario en los servicios integrados de Fyntasy.">
+    <title>Fyntasy - Registro de Cuenta</title>
     <link rel="stylesheet" href="register_style.css">
 </head>
 <body>
     <div class="register-container">
         <div class="brand-header" onclick="location.href='../index.html'" style="cursor: pointer;">
-            <i class="fa-solid fa-heart register-logo-icon"></i>
+            <i class="fa-solid fa-heart register-logo-icon" aria-hidden="true"></i>
             <h2>Fyntasy</h2>
         </div>
-        <h3>Únete a nuestra comunidad</h3>
-        <p class="subtitle">Crea tu cuenta y empieza a coleccionar</p>
+        <h3>Creación de Usuario</h3>
+        <p class="subtitle">Complete los campos obligatorios para registrar su acceso al sistema</p>
         
         <form id="register-form">
             <div class="input-group">
-                <label for="reg-username">Nombre de Usuario</label>
+                <label for="reg-username">Nombre de usuario</label>
                 <input type="text" id="reg-username" required placeholder="Ej. elianna_s">
             </div>
             <div class="input-group">
-                <label for="reg-email">Correo Electrónico</label>
-                <input type="email" id="reg-email" required placeholder="ejemplo@correo.com">
+                <label for="reg-email">Dirección de correo electrónico</label>
+                <input type="email" id="reg-email" required placeholder="correo@gmail.com">
             </div>
             <div class="input-group">
                 <label for="reg-password">Contraseña</label>
@@ -30,17 +31,17 @@
             </div>
 
             <div class="input-group checkbox-group" style="display: flex; align-items: flex-start; gap: 0.6rem; margin: 1.2rem 0; text-align: left;">
-                <input type="checkbox" id="reg-politicas" style="width: auto; margin-top: 0.2rem; cursor: pointer;">
-                <label for="reg-politicas" style="font-size: 0.84rem; color: #8a7377; line-height: 1.4; cursor: pointer; user-select: none;">
-                    Acepto las <strong>Políticas de Convivencia Armónica</strong> de Fyntasy y entiendo que el uso de expresiones ofensivas o la publicación de imágenes obscenas será penalizado automáticamente por la Inteligencia Artificial del sistema.
+                <input type="checkbox" id="reg-politicas" style="width: auto; margin-top: 0.2rem; cursor: pointer;" required>
+                <label for="reg-politicas" style="font-size: 0.84rem; color: #5e484b; line-height: 1.4; cursor: pointer; user-select: none;">
+                    He leído y acepto los <strong>Términos de Convivencia y Políticas de Moderación de Contenido</strong>. Entiendo que la inserción de lenguaje explícito en formularios o la carga de imágenes obscenas activará el baneo inmediato por la Inteligencia Artificial del sistema local.
                 </label>
             </div>
 
-            <button type="submit" class="btn-register">Registrarse</button>
+            <button type="submit" class="btn-register">Registrado</button>
         </form>
         
         <div class="register-footer">
-            <p>¿Ya tienes una cuenta? <a href="../login/login.html">Inicia sesión</a></p>
+            <p>¿Ya tienes una cuenta? <a href="../login/login.html">Iniciar sesión</a></p>
         </div>
     </div>
     <script src="register.js"></script>

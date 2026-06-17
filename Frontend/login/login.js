@@ -1,6 +1,5 @@
 const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
-// 1. INICIO DE SESIÓN TRADICIONAL
 document.getElementById("login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -17,33 +16,34 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         const data = await response.json();
 
         if (response.ok) {
-            // Guardamos las variables de sesión reales
             localStorage.setItem("usuario_autenticado", "true");
             localStorage.setItem("usuario_id", data.usuario_id);
             localStorage.setItem("username", data.user.username);
 
-            alert(`¡Bienvenido de vuelta, ${data.user.username}!`);
+            alert(`Autenticación exitosa. Identificador: @${data.user.username}`);
             window.location.href = "../index.html"; 
         } else {
-            alert(`Error de acceso: ${data.detail || "Credenciales incorrectas"}`);
+            alert(`Fallo de autenticación: ${data.detail || "Credenciales inválidas."}`);
         }
     } catch (error) {
         console.error("Error en login tradicional:", error);
-        alert("No se pudo conectar con el servidor.");
+        alert("No se pudo establecer conexión con el servicio de autenticación.");
     }
 });
 
-// 2. INICIO DE SESIÓN CON GOOGLE IDENTITY (Real e Interceptado)
 async function handleGoogleCredentialResponse(response) {
-    console.log("Se capturó la respuesta del componente de Google.");
-    
-    const tokenEnviado = (response && response.credential) ? response.credential : "google_identity_handshake_verified";
+    if (!response || !response.credential) {
+        console.error("No se recibió una credencial válida desde la ventana de Google.");
+        return;
+    }
+
+    console.log("[OAUTH] Token JWT legítimo obtenido desde los servidores de Google.");
 
     try {
         const res = await fetch(`${API_BASE_URL}/auth/google`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token: String(tokenEnviado) })
+            body: JSON.stringify({ token: String(response.credential) })
         });
 
         const data = await res.json();
@@ -53,12 +53,15 @@ async function handleGoogleCredentialResponse(response) {
             localStorage.setItem("usuario_id", data.usuario_id);
             localStorage.setItem("username", data.user.username);
             
-            alert(`¡Inicio de sesión con Google exitoso! Se envió la alerta a tu bandeja de correo.`);
+            alert(`Autenticación con Google exitosa. Usuario activo: @${data.user.username}`);
             window.location.href = "../index.html"; 
         } else {
-            alert(`Falla de Google en Servidor: ${data.detail}`);
+            alert(`Falla de validación en el servidor: ${data.detail}`);
         }
     } catch (error) {
-        console.error("Error al conectar con FastAPI:", error);
+        console.error("Error en el pipeline de verificación:", error);
+        alert("Error de red al intentar validar la firma digital con los servidores de Google.");
     }
 }
+
+window.handleGoogleCredentialResponse = handleGoogleCredentialResponse;

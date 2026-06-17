@@ -8,5 +8,5 @@ __pycache__/
 venv/
 ENV/
 
-# Bases de datos locales (Opcional, muy recomendado para que no choque)
 *.sqlite3
+.env

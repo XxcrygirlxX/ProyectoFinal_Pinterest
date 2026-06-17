@@ -1,5 +1,4 @@
-const IP_SERVIDOR = "127.0.0.1";
-const API_BASE_URL = `http://${IP_SERVIDOR}:8000/api/v1`;
+const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 document.getElementById("register-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -11,12 +10,12 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
     const politicasAceptadas = document.getElementById("reg-politicas").checked;
 
     if (!politicasAceptadas) {
-        alert("¡Espera! Para formar parte de Fyntasy, debes leer y aceptar obligatoriamente las Políticas de Convivencia y moderación ética de la plataforma.");
+        alert("Error de validación: Es obligatorio aceptar las políticas de moderación e IA corporativas para proceder.");
         return;
     }
 
     if (password.length < 6) {
-        alert("La contraseña debe tener al menos 6 caracteres.");
+        alert("La longitud mínima de la contraseña debe ser de 6 caracteres.");
         return;
     }
 
@@ -36,13 +35,13 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
         const data = await response.json();
 
         if (response.ok) {
-            alert("¡Tu cuenta en Fyntasy ha sido creada! Se ha enviado el correo electrónico real de bienvenida.");
+            alert("Cuenta registrada de forma exitosa.");
             window.location.href = "../login/login.html";
         } else {
-            alert(`Error en el registro: ${data.detail || "Datos inválidos"}`);
+            alert(`Fallo en el registro: ${data.detail || "Esquema de datos inválido."}`);
         }
     } catch (error) {
-        console.error("Error de red:", error);
-        alert("No se pudo conectar con el servidor central de Fyntasy.");
+        console.error("Error de conexión:", error);
+        alert("Fallo crítico de red: No se pudo contactar al servidor central de Fyntasy.");
     }
 });

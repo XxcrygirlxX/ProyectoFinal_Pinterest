@@ -36,7 +36,6 @@ body {
 
 .user-gallery h3 { font-family: 'Playfair Display', serif; text-align: left; margin-bottom: 1.5rem; font-size: 1.4rem; border-bottom: 1px solid var(--border-soft); padding-bottom: 0.5rem; }
 
-/* Grid de Pines Reutilizado de Fyntasy */
 .pin-grid { column-count: 4; column-gap: 16px; text-align: left; }
 .pin-card { background-color: var(--card-white); margin-bottom: 16px; break-inside: avoid; border-radius: 18px; overflow: hidden; border: 1px solid var(--border-soft); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
 .pin-card img { width: 100%; display: block; }
@@ -44,7 +43,6 @@ body {
 .pin-info h4 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.3rem; }
 .pin-info p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
 
-/* Nuevos Estilos Interactivos para el Perfil Fyntasy */
 .profile-stats {
     margin: 1rem 0;
     font-size: 0.95rem;
