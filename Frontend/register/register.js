@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
+const IP_SERVIDOR = "127.0.0.1";
+const API_BASE_URL = `http://${IP_SERVIDOR}:8000/api/v1`;
 
 document.getElementById("register-form").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -6,6 +7,13 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
     const username = document.getElementById("reg-username").value.trim();
     const email = document.getElementById("reg-email").value.trim();
     const password = document.getElementById("reg-password").value;
+    
+    const politicasAceptadas = document.getElementById("reg-politicas").checked;
+
+    if (!politicasAceptadas) {
+        alert("¡Espera! Para formar parte de Fyntasy, debes leer y aceptar obligatoriamente las Políticas de Convivencia y moderación ética de la plataforma.");
+        return;
+    }
 
     if (password.length < 6) {
         alert("La contraseña debe tener al menos 6 caracteres.");
