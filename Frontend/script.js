@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000/api/v1/pins";
+const API_URL = "http://18.225.168.210:8000/api/v1/pins";";
 let usuarioAutenticado = localStorage.getItem("usuario_autenticado") === "true";
 let datosPines = []; 
 let categoriaActual = "todas";
@@ -170,7 +170,7 @@ async function procesarNuevoPin(e) {
     btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Procesando Red Neuronal y AWS S3...`;
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/pins/upload", { method: "POST", body: formData });
+        const response = await fetch("http://18.225.168.210:8000/api/v1/pins/upload", { method: "POST", body: formData });
         const data = await response.json();
         if (response.ok) {
             alert("Recurso verificado por la IA y cargado correctamente en AWS S3.");
@@ -195,7 +195,7 @@ async function ejecutarReporte(id) {
     formData.append("usuario_id", usuarioId);
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/v1/pins/${id}/report`, { method: "POST", body: formData });
+        const response = await fetch(`http://18.225.168.210:8000/api/v1/pins/${id}/report`, { method: "POST", body: formData });
         const data = await response.json();
         if (response.ok) { 
             alert(data.message); 

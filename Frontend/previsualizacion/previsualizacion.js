@@ -1,6 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 const pinId = urlParams.get('id');
-const API_BASE = "http://127.0.0.1:8000/api/v1/pins";
+const API_BASE = "http://18.225.168.210:8000/api/v1/pins";
 const usuarioAutenticado = localStorage.getItem("usuario_autenticado") === "true";
 
 document.addEventListener("DOMContentLoaded", () => {
