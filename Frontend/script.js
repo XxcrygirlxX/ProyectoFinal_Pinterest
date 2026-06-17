@@ -1,4 +1,4 @@
-const API_URL = "http://18.225.168.210:8000/api/v1/pins";";
+const API_URL = "http://127.0.0.1:8000/api/v1/pins";
 let usuarioAutenticado = localStorage.getItem("usuario_autenticado") === "true";
 let datosPines = []; 
 let categoriaActual = "todas";
@@ -61,7 +61,7 @@ function renderizarPines(pines) {
     grid.innerHTML = "";
 
     if (pines.length === 0) {
-        grid.innerHTML = `<p style="color: var(--text-muted); text-align: center; width: 100%;">No se encontraron registros indexados en esta categoría.</p>`;
+        grid.innerHTML = `<p style="color: var(--text-muted); text-align: center; width: 100%;">No se encontraron recursos indexados en esta categoría.</p>`;
         return;
     }
 
@@ -73,17 +73,17 @@ function renderizarPines(pines) {
             card.className = "pin-card";
             const rutaImagen = pin.source;
             
-            const botonReporte = usuarioAutenticado 
-                ? `<button class="btn-report" onclick="ejecutarReporte(${pin.id})" aria-label="Reportar infracción en pin ${pin.titulo}"><i class="fa-solid fa-flag" aria-hidden="true"></i></button>`
-                : `<button class="btn-report" onclick="alert('Autenticación requerida para realizar reportes.')" style="opacity:0.3;" aria-label="Reporte bloqueado"><i class="fa-solid fa-flag" aria-hidden="true"></i></button>`;
-
-            card.innerHTML = `
-                <img src="${rutaImagen}" alt="Recurso multimedia: ${pin.titulo}" loading="lazy" decoding="async" style="cursor: pointer; width: 100%; display: block; height: auto;" onclick="location.href='previsualizacion/previsualizacion.html?id=${pin.id}'">
+           const botonReporte = usuarioAutenticado 
+                ? `<button class="btn-report" onclick="ejecutarReporte(${pin.id})" aria-label="Reportar elemento ${pin.titulo}"><i class="fa-solid fa-flag"></i></button>`
+                : `<button class="btn-report" onclick="alert('Autenticación requerida para realizar reportes.')" style="opacity:0.4;" aria-label="Reporte bloqueado"><i class="fa-solid fa-flag"></i></button>`;
+            
+                card.innerHTML = `
+                <img src="${rutaImagen}" alt="Recurso: ${pin.titulo}" loading="lazy" decoding="async" style="cursor: pointer; width: 100%; display: block; height: auto;" onclick="location.href='previsualizacion/previsualizacion.html?id=${pin.id}'">
                 <div class="pin-info">
                     <h4 style="cursor: pointer;" onclick="location.href='previsualizacion/previsualizacion.html?id=${pin.id}'">${pin.titulo}</h4>
                     <p>${pin.descripcion || 'Sin descripción disponible.'}</p>
                     <div class="pin-footer">
-                        <span style="font-size: 0.8rem; color: var(--pink-dark); font-weight:600;"><i class="fa-solid fa-database" aria-hidden="true"></i> S3 Storage • <small style="text-transform: capitalize;">${pin.categoria}</small></span>
+                        <span style="font-size: 0.8rem; color: #ff4d6d; font-weight:600;"><i class="fa-solid fa-database"></i> S3 Storage • <small style="text-transform: capitalize;">${pin.categoria}</small></span>
                         ${botonReporte}
                     </div>
                 </div>
@@ -167,10 +167,10 @@ async function procesarNuevoPin(e) {
 
     const textoOriginal = btnSubmit.innerHTML;
     btnSubmit.disabled = true;
-    btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Procesando Red Neuronal y AWS S3...`;
+    btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Subiendo recurso a AWS S3...`;
 
     try {
-        const response = await fetch("http://18.225.168.210:8000/api/v1/pins/upload", { method: "POST", body: formData });
+        const response = await fetch("http://127.0.0.1:8000/api/v1/pins/upload", { method: "POST", body: formData });
         const data = await response.json();
         if (response.ok) {
             alert("Recurso verificado por la IA y cargado correctamente en AWS S3.");
@@ -189,13 +189,13 @@ async function procesarNuevoPin(e) {
 async function ejecutarReporte(id) {
     const usuarioId = localStorage.getItem("usuario_id");
     if (!usuarioId) { alert("Autenticación requerida."); return; }
-    if (!confirm("¿Confirmar registro sobre este pin?")) return;
+    if (!confirm("¿Confirmar registro de reporte técnico sobre este elemento desde el feed?")) return;
 
     const formData = new FormData();
     formData.append("usuario_id", usuarioId);
 
     try {
-        const response = await fetch(`http://18.225.168.210:8000/api/v1/pins/${id}/report`, { method: "POST", body: formData });
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/pins/${id}/report`, { method: "POST", body: formData });
         const data = await response.json();
         if (response.ok) { 
             alert(data.message); 
@@ -205,3 +205,5 @@ async function ejecutarReporte(id) {
         }
     } catch (e) { console.error(e); }
 }
+
+window.ejecutarReporte = ejecutarReporte;

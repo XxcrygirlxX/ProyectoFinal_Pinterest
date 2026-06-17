@@ -21,7 +21,7 @@ async function cargarMisPines() {
     try {
 //peticion mediante jquery
         const pines = await $.ajax({
-            url: `http://18.225.168.210:8000/api/v1/pins/user/${usuarioId}`,
+            url: `http://127.0.0.1:8000/api/v1/pins/user/${usuarioId}`,
             method: 'GET',
             dataType: 'json'
         });
@@ -34,7 +34,7 @@ async function cargarMisPines() {
         }
 //se agrega interacciòn con jquery
         $.each(pines, function(index, pin) {
-            const rutaImagen = pin.source.startsWith("http") ? pin.source : `http://18.225.168.210:8000/${pin.source}`;
+            const rutaImagen = pin.source.startsWith("http") ? pin.source : `http://127.0.0.1:8000/${pin.source}`;
 
             const $card = $("<div>", { class: "pin-card" });
             

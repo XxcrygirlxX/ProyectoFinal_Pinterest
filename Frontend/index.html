@@ -3,26 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <meta name="description" content="Fyntasy - Plataforma de catálogo visual y compartición de ideas multimedia con moderación automática por inteligencia artificial y almacenamiento estructurado en la nube.">
-    <title>Fyntasy - Inspiración Visual</title>
+    <title>Fyntasy - Ecosistema de Inspiración Visual</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header class="navbar">
-        <div class="logo" id="btn-logo" role="button" aria-label="Ir al inicio">
-            <i class="fa-solid fa-heart icon-logo" aria-hidden="true"></i>
+        <div class="logo" id="btn-logo" role="button" aria-label="Ir al inicio" style="cursor: pointer;">
             <span>Fyntasy</span>
         </div>
         
         <div class="search-bar">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input type="text" id="search-input" placeholder="Buscar pins..." aria-label="Buscar publicaciones en la plataforma">
+            <input type="text" id="search-input" placeholder="Buscar recursos..." aria-label="Buscar publicaciones en la plataforma">
         </div>
         
         <nav class="nav-menu" aria-label="Navegación principal">
@@ -46,21 +49,21 @@
     <div class="modal" id="upload-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
         <div class="modal-content">
             <span class="close-btn" id="close-modal-btn" role="button" aria-label="Cerrar ventana de carga">&times;</span>
-            <h3 id="modal-title">Subir Pin</h3>
+            <h3 id="modal-title">Subir Recurso</h3>
             <form id="upload-form">
                 <div class="form-group">
                     <label for="pin-title">Título</label>
-                    <input type="text" id="pin-title" required placeholder="Ingrese un título.">
+                    <input type="text" id="pin-title" required placeholder="Ingrese un título descriptivo">
                 </div>
                 
                 <div class="form-group">
                     <label for="pin-description">Descripción</label>
-                    <textarea id="pin-description" required placeholder="Ingrese una descripción."></textarea>
+                    <textarea id="pin-description" required placeholder="Ingrese una descripción técnica o informativa del recurso"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="pin-category">Categoría de Destino</label>
-                    <select id="pin-category" required aria-label="Seleccionar subcarpeta de destino">
+                    <select id="pin-category" required aria-label="Seleccionar subcarpeta de destino" style="background-color: var(--pink-light); border: 1px solid transparent; padding: 0.8rem 1rem; border-radius: 14px; color: var(--text-dark); font-size: 0.92rem; outline: none;">
                         <option value="paisajes">Paisajes</option>
                         <option value="entrenamiento">Entrenamiento</option>
                         <option value="chill" selected>Chill</option>
@@ -69,14 +72,14 @@
                 
                 <div class="form-group">
                     <label for="pin-file">Archivo de Imagen</label>
-                    <input type="file" id="pin-file" accept="image/*" required aria-label="Seleccionar imagen">
+                    <input type="file" id="pin-file" accept="image/*" required aria-label="Seleccionar archivo binario de imagen">
                 </div>
                 
                 <div class="ethical-card">
                     <p><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <strong>Filtro Inteligente Activo:</strong> Los metadatos de texto y la matriz de píxeles del archivo serán procesados de forma local por la red neuronal entrenada para la detección y bloqueo automático de recursos explícitos o no autorizados.</p>
                 </div>
                 
-                <button type="submit" class="btn-submit">Publicar Pin</button>
+                <button type="submit" class="btn-submit">Publicar Recurso</button>
             </form>
         </div>
     </div>

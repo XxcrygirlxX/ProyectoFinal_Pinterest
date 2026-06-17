@@ -199,22 +199,30 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 0.6rem;
-    border-top: 1px solid var(--pink-light);
-    padding-top: 0.6rem;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0 4px;
 }
 
 .btn-report {
     background: none;
     border: none;
-    color: var(--text-gray);
+    color: #ff4d6d !important;
     cursor: pointer;
-    font-size: 0.95rem;
-    transition: 0.2s;
+    font-size: 1.1rem;
+    padding: 6px 10px;
+    border-radius: 50%;
+    display: inline-flex !important; 
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+    z-index: 10;
 }
 
 .btn-report:hover {
-    color: var(--pink-dark);
+    color: #cc294b !important; 
+    background-color: #fff0f3;
+    transform: scale(1.15); 
 }
 
 .modal {
@@ -347,4 +355,77 @@ body {
     color: #ffffff;
     border-color: var(--pink-dark);
     box-shadow: 0 4px 12px rgba(255, 77, 109, 0.2);
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        height: auto;
+    }
+
+    .logo span {
+        display: none; 
+    }
+
+    .search-bar {
+        order: 3; 
+        width: 100%;
+        margin: 0;
+    }
+
+    .nav-menu {
+        gap: 0.3rem;
+    }
+
+    .btn-nav, .btn-auth-outline {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .categories-bar {
+        padding: 0.5rem 1rem;
+        justify-content: flex-start;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        gap: 0.5rem;
+    }
+
+    .categories-bar::-webkit-scrollbar {
+        display: none; 
+    }
+
+    .category-chip {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.82rem;
+        flex-shrink: 0;
+    }
+
+    .pin-grid {
+        columns: 2; 
+        column-gap: 10px;
+        padding: 10px;
+    }
+
+    .pin-card {
+        margin-bottom: 10px;
+        break-inside: avoid;
+    }
+
+    .pin-info h4 {
+        font-size: 0.9rem;
+    }
+
+    .pin-info p {
+        font-size: 0.78rem;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 1.5rem;
+        margin: 10px;
+        border-radius: 20px;
+    }
 }

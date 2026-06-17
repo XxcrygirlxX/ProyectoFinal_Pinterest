@@ -6,7 +6,7 @@ class Usuario(SQLModel, table=True):
     username: str = Field(unique=True, index=True)
     email: str = Field(unique=True)
     password: str
-    bio: str = Field(default="Diseñando mi tablero de sueños en Fyntasy ✨") # Nueva bio para el perfil
+    bio: str = Field(default="Diseñando mi tablero de sueños en Fyntasy")
 
 class Pin(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
